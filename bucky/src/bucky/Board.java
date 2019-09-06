@@ -279,15 +279,15 @@ public class Board extends JPanel
         	label2.setText(String.valueOf(cat.getMag_Vel()));
         	
         	int magVel = (int)cat.getMag_Vel();
-        	if(magVel > 10) {
-        		magVel = 10;
+        	if(magVel > 7) {
+        		magVel = 7;
         	}
         	
     		if(animationCount >= animationDelay ) {
     			
     			imageCount++;
     			animationCount = 0;
-    			animationDelay = 4 - (magVel/10)*4; 
+    			animationDelay = 4 - (magVel/7)*4; 
     		}
     		
     			
