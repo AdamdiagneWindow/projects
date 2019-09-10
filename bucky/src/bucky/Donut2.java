@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class Donut2 extends JFrame {
     
-	JPanel cards;
+	JPanel gamePanel;
 	final static String TITLEPANEL = "Card with TitleScreen";
 	final static String GAMEPANEL = "Card with BoardPanel";
 	
@@ -23,8 +23,8 @@ public class Donut2 extends JFrame {
     private void initUI() {
     	
     	
-    	cards = new JPanel(new CardLayout());
-        final CardLayout cl = (CardLayout)(cards.getLayout());  
+    	gamePanel = new JPanel(new CardLayout());
+        final CardLayout cl = (CardLayout)(gamePanel.getLayout());  
         
         /*
     	JPanel titlePanel = new JPanel();
@@ -34,7 +34,7 @@ public class Donut2 extends JFrame {
     	play.addActionListener(new ActionListener(){
     		public void actionPerformed(ActionEvent e) {
     			
-    			cl.show(cards, GAMEPANEL);
+    			cl.show(gamePanel, GAMEPANEL);
     		}
     	});
     	
@@ -42,19 +42,19 @@ public class Donut2 extends JFrame {
     	*/
     		
         
-       title titlePanel = new title(cl, cards, GAMEPANEL);
+       title titlePanel = new title(cl, gamePanel, GAMEPANEL);
         
     	Board board = new Board();
     	
-    	cards.add(titlePanel, TITLEPANEL);
-    	cards.add(board, GAMEPANEL);
+    	gamePanel.add(titlePanel, TITLEPANEL);
+    	gamePanel.add(board, GAMEPANEL);
     	
        
-        cl.show(cards, TITLEPANEL);   	
+        cl.show(gamePanel, TITLEPANEL);   	
         
         
         
-        add(cards);
+        add(gamePanel);
         
         setResizable(false);
         pack();
@@ -63,11 +63,6 @@ public class Donut2 extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        
-        
-        
-        
-
         
         
     }    

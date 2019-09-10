@@ -57,16 +57,24 @@ public class projectile  {
 
 
 		Image im;
-		ImageIcon icon = new ImageIcon("src/resources/cat1.png");
+		ImageIcon icon = new ImageIcon("src/resources/catAmyTrans.png");
 		im = icon.getImage();
 		stationarySprites.add(im);
-		
-	
-		
 		
 		width = im.getWidth(null);
 		height = im.getHeight(null);
 		
+		icon = new ImageIcon("src/resources/catAmyTrans1.png");
+		im = icon.getImage();
+		stationarySprites.add(im);
+		
+		icon = new ImageIcon("src/resources/catAmyTrans2.png");
+		im = icon.getImage();
+		stationarySprites.add(im);
+		
+		icon = new ImageIcon("src/resources/catAmyTrans3.png");
+		im = icon.getImage();
+		stationarySprites.add(im);
 		
 	}
 	
@@ -135,6 +143,11 @@ public class projectile  {
 	public Image getStationarySprite(int x) {
 		
 		return stationarySprites.get(x);
+	}
+	
+	public Image getPulledSprite(int x) {
+		
+		return pulledSprites.get(x);
 	}
 	
 	

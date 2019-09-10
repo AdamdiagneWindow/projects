@@ -30,10 +30,14 @@ public class Board extends JPanel
 	private final int delay = 25;
 	private Thread animator;
 	private int imageCount = 0;
-	private int animationDelay = 0;
+	private int animationDelayFlying = 0;
+	private int animationDelayStationary = 10;
 	private int animationCount = 0;
+	
 
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0;
+	
+	private double angle, tanAngle;
 
 	private boolean drag = false;
 	private boolean addingBlackHole = false;
@@ -48,7 +52,9 @@ public class Board extends JPanel
 	
 	private gravitationalField gravityField;
 	
-	private projectile cat;
+	private cat cat1;
+	
+	private star star1;
 	
 	public Board( ) {
 		
@@ -57,7 +63,7 @@ public class Board extends JPanel
 	
 	private void initBoard() {
 		
-		setBackground(Color.WHITE);
+		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(width, height));
 		setSize(width, height);
 		setLayout(new BorderLayout());
@@ -65,7 +71,12 @@ public class Board extends JPanel
 		
 		gravityField = new gravitationalField(width, height);
 		
-		cat = new projectile(300, 300, 0, 0, 0, 0);
+		cat1 = new cat(300, 300, 0, 0, 0, 0, 10);
+		
+		star1 = new star(100, 100, 10);
+
+		
+
 		
 		displayPanel = new JPanel();
 		displayPanel.setPreferredSize(new Dimension(width, 50));
@@ -130,18 +141,19 @@ public class Board extends JPanel
 		    	y = currentY;
 		    	*/
 		    	
-		    	cat.setPosition(currentX, currentY);
-		    	cat.setVelocity(0, 0);
-			    cat.setAcceleration(0, 0);
+		    	cat1.setPosition(currentX, currentY);
+		    	cat1.setVelocity(0, 0);
+			    cat1.setAcceleration(0, 0);
 			
-			    cat.setStationary(true);
+			    cat1.setStationary(true);
+			    imageCount = 0;
 			
-			    repaint();	
+			    //repaint();	
 		    }
 		    
 		    if (addingBlackHole == true) {
 		    	
-		    	blackHole b = new blackHole(event.getX(), event.getY(), 1.5);
+		    	blackHole b = new blackHole(event.getX(), event.getY(), 5);
 		    	gravityField.addBlackHole(b);
 		    	
 		    	addingBlackHole = false;
@@ -156,10 +168,10 @@ public class Board extends JPanel
 		
 		public void mousePressed(MouseEvent event) {
 			
-			int x = cat.getX_Coord();
-			int y = cat.getY_Coord();
-			int w = cat.getWidth();
-			int h = cat.getHeight();
+			int x = cat1.getX_Coord();
+			int y = cat1.getY_Coord();
+			int w = cat1.getWidth();
+			int h = cat1.getHeight();
 			
 			
 			presX = event.getX();
@@ -172,14 +184,14 @@ public class Board extends JPanel
 		
 		public void mouseReleased(MouseEvent event) {
 			
-			cat.setVelocity( 0.1 * (presX - dragX), 0.1 * (presY - dragY) );
+			cat1.setVelocity( 0.1 * (presX - dragX), 0.1 * (presY - dragY) );
 			
 			presX = 0;
 			presY = 0;
 			dragX = 0;
 			dragY = 0;
 			
-			repaint();
+			//repaint();
 			
 
 			
@@ -187,7 +199,7 @@ public class Board extends JPanel
 			
 			
 			if(addingBlackHole == false) {
-				cat.setStationary(false);
+				cat1.setStationary(false);
 			}
 
 			
@@ -214,9 +226,9 @@ public class Board extends JPanel
 				x = event.getX();
 				y = event.getY();*/
 				
-				cat.setPosition(event.getX(), event.getY());
+				cat1.setPosition(event.getX(), event.getY());
 				
-				repaint();
+				//repaint();
 			}
 			
 
@@ -232,7 +244,7 @@ public class Board extends JPanel
 				blackHoleX = event.getX();
 				blackHoleY = event.getY();
 			
-				repaint();				
+				//repaint();				
 				
 			}
 
@@ -262,32 +274,46 @@ public class Board extends JPanel
 	
     private void doDrawing(Graphics g) {
     	
-    	Image image = null ;
+
     	
-    	if(cat.getStationary() == true) {
+    	Image image = null ;
+    	Image propImage = null;
+    	
+    	propImage = star1.getNextSprite();
+    	
+    	if(cat1.getStationary() == true) {
     		
-    		image = cat.getStationarySprite(0);
+    		image = cat1.getNextSprite();
     		
     	}
     	
-    	if(cat.getStationary() == false) {
+    	if(drag == true && dragX != 0 && dragY != 0 && presX != 0 && presY != 0 && presX != dragX) {
+    		
+    		tanAngle = ((double)dragY - (double)presY)/((double)dragX - (double)presX);
+    		angle = Math.atan(tanAngle)*180.00/Math.PI;
+    		//image = cat.getPulledSprite((int)(Math.round(angle/40)));
+    		
+    	}
+    	
+    	
+    	if(cat1.getStationary() == false) {
     		
     		
     			
-    		image = cat.getFlyingSprite(imageCount);
+    		image = cat1.getFlyingSprite(imageCount);
     			
-        	label2.setText(String.valueOf(cat.getMag_Vel()));
+        	label2.setText(String.valueOf(cat1.getMag_Vel()));
         	
-        	int magVel = (int)cat.getMag_Vel();
+        	int magVel = (int)cat1.getMag_Vel();
         	if(magVel > 7) {
         		magVel = 7;
         	}
         	
-    		if(animationCount >= animationDelay ) {
+    		if(animationCount >= animationDelayFlying ) {
     			
     			imageCount++;
     			animationCount = 0;
-    			animationDelay = 4 - (magVel/7)*4; 
+    			animationDelayFlying = 4 - (magVel/7)*4; 
     		}
     		
     			
@@ -319,7 +345,9 @@ public class Board extends JPanel
         g2d.setRenderingHints(rh);      	
                 
         
-        g2d.drawImage(image, cat.getX_Coord(), cat.getY_Coord(), this);
+        g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+        
+        g2d.drawImage(propImage, star1.getX_Coord(), star1.getY_Coord(), this);
         
         
         for (blackHole b : gravityField.getBlackHoleList()) {
@@ -342,7 +370,7 @@ public class Board extends JPanel
         }
         
         g.drawLine(presX, presY, dragX, dragY);
-        
+       
         		
     }
     
@@ -356,8 +384,8 @@ public class Board extends JPanel
     
     private void cycle() {
     	
-    	int x = cat.getX_Coord();
-    	int y = cat.getY_Coord();
+    	int x = cat1.getX_Coord();
+    	int y = cat1.getY_Coord();
     	
     	double ax = 0;
     	double ay = 0;
@@ -367,11 +395,11 @@ public class Board extends JPanel
     	}
     	
     	
-    	if (cat.getStationary() == false) {
+    	if (cat1.getStationary() == false) {
     		
-    		cat.setAcceleration(ax, ay);
-    		cat.accelerate();
-    		cat.move();
+    		cat1.setAcceleration(ax, ay);
+    		cat1.accelerate();
+    		cat1.move();
     		
     	}
     	
@@ -379,23 +407,22 @@ public class Board extends JPanel
     	
     	
     	if(x > width) {
-    		cat.setPosition(0, cat.getY_Coord());
+    		cat1.setPosition(0, cat1.getY_Coord());
     	}
     	
     	if(x < 0) {
-    		cat.setPosition(width, cat.getY_Coord());
+    		cat1.setPosition(width, cat1.getY_Coord());
     	}
     	
     	if(y > height ) {
-    		cat.setPosition(cat.getX_Coord(), 0);
+    		cat1.setPosition(cat1.getX_Coord(), 0);
     	}
     	
     	if(y < 0) {
-    		cat.setPosition(cat.getX_Coord(), height);
+    		cat1.setPosition(cat1.getX_Coord(), height);
     	}
     	
-    	
-   
+    	//System.out.println(angle);
     	
     }
     
