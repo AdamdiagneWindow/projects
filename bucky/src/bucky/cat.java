@@ -35,16 +35,42 @@ public class cat extends projectileNew {
 		addSprite("src/resources/cat3.png");
 	}
 	
-	public Image getFlyingSprite(int x) {
+	public void animateVarDelay() {
 		
-		return flyingSprites.get(x);
+    	int magVel = (int)getMag_Vel();
+    	if(magVel > 7) {
+    		magVel = 7;
+    	}
+		if(count >= frameDelay) {
+			imageIndex++;
+			count = 0;
+			frameDelay = 4 - (magVel/7)*4;
+		}
+			
+		if(imageIndex == sprites.size()) {
+			imageIndex = 0;
+		}
+		count++;		
+		
+	}
+	
+	public Image getFlyingSprite() {
+		
+		return flyingSprites.get(imageIndex);
 	}
 	
 
 	
-	public Image getPulledSprite(int x) {
+	public Image getPulledSprite() {
 		
-		return pulledSprites.get(x);
+		return pulledSprites.get(imageIndex);
 	}	
+	
+	public Image getNextFlyingSprite() {
+		
+		animateVarDelay();
+		return getFlyingSprite();
+	}
+	
 	
 }

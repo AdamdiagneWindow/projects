@@ -68,11 +68,11 @@ public class prop {
 		
 	}
 	
-	public void resetPropAnimation() {
+	public void resetPropAnimation(int delay) {
 		
 		imageIndex = 0;
 		count = 0;
-		frameDelay = 0;
+		frameDelay = delay;
 		
 		
 	}

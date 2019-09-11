@@ -64,6 +64,8 @@ public class projectileNew extends prop{
 		
 	}
 	
+
+	
 	public void setVelocity(double vx, double vy) {
 		
 		x_Vel = vx;
@@ -102,6 +104,7 @@ public class projectileNew extends prop{
 	public boolean getStationary() {
 		return stationary;
 	}
+	
 	
 	
 }

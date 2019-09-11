@@ -146,6 +146,7 @@ public class Board extends JPanel
 			    cat1.setAcceleration(0, 0);
 			
 			    cat1.setStationary(true);
+			    cat1.resetPropAnimation(10);
 			    imageCount = 0;
 			
 			    //repaint();	
@@ -298,32 +299,7 @@ public class Board extends JPanel
     	
     	if(cat1.getStationary() == false) {
     		
-    		
-    			
-    		image = cat1.getFlyingSprite(imageCount);
-    			
-        	label2.setText(String.valueOf(cat1.getMag_Vel()));
-        	
-        	int magVel = (int)cat1.getMag_Vel();
-        	if(magVel > 7) {
-        		magVel = 7;
-        	}
-        	
-    		if(animationCount >= animationDelayFlying ) {
-    			
-    			imageCount++;
-    			animationCount = 0;
-    			animationDelayFlying = 4 - (magVel/7)*4; 
-    		}
-    		
-    			
-    		if(imageCount == 9) {
-    			imageCount = 0;
-    		}
-    			
-    			
-    		animationCount++;
-    	
+    		image = cat1.getNextFlyingSprite();
     		
     	}
     	
