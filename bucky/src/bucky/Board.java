@@ -11,12 +11,14 @@ import java.awt.Image;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.*;
+
 import java.awt.BorderLayout;
 
 
@@ -35,12 +37,13 @@ public class Board extends JPanel
 	private int animationCount = 0;
 	
 
-	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0;
+	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
 	
 	private double angle, tanAngle;
 
 	private boolean drag = false;
 	private boolean addingBlackHole = false;
+	private boolean addingGoal = false;
 	
     private JLabel label, label2;
     
@@ -48,20 +51,22 @@ public class Board extends JPanel
     private JPanel inputPanel;
     
     private JButton addBlackHole;
+    private JButton addGoal;
     
 	
 	private gravitationalField gravityField;
-	
 	private cat cat1;
-	
 	private star star1;
+	private goal gol;
 	
-	public Board( ) {
+	
+	public Board(CardLayout cl, Container pane) {
 		
-		initBoard();
+		initBoard(cl, pane);
 	}
 	
-	private void initBoard() {
+	private void initBoard(final CardLayout cl, final Container pane) {
+		
 		
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(width, height));
@@ -99,7 +104,6 @@ public class Board extends JPanel
 		
 		addBlackHole = new JButton();
 		addBlackHole.setBounds(0, 0, 20, 20);
-		
 		addBlackHole.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -109,7 +113,20 @@ public class Board extends JPanel
 			
 		});
 		
+		addGoal = new JButton();
+		addGoal.setBounds(20, 0, 20, 20);
+		addGoal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addingGoal = true;
+				
+			}
+			
+		});
+		
+		
 		inputPanel.add(addBlackHole);
+		inputPanel.add(addGoal);
 		
 		
 		
@@ -134,7 +151,7 @@ public class Board extends JPanel
 			label.setText("x = " + currentX + "     y = " + currentY);								
 			
 		    
-		    if(addingBlackHole == false ) {
+		    if(addingBlackHole == false && addingGoal == false) {
 		    	
 		    	/*
 		    	x = currentX;
@@ -159,6 +176,23 @@ public class Board extends JPanel
 		    	
 		    	addingBlackHole = false;
 		    
+		    	
+		    }
+		    
+		    if (addingGoal == true) {
+		    	
+		    	if(gol == null) {
+		    		
+		    		gol = new goal(event.getX(), event.getY(), 10);
+		    	}
+		    	else {
+		    		gol.setPosition(event.getX(), event.getY());		    		
+		    	}
+		    	
+		    	addingGoal = false;
+
+		    	
+		    	
 		    	
 		    }
 		    
@@ -199,7 +233,7 @@ public class Board extends JPanel
 			
 			
 			
-			if(addingBlackHole == false) {
+			if(addingBlackHole == false && addingGoal == false) {
 				cat1.setStationary(false);
 			}
 
@@ -246,6 +280,13 @@ public class Board extends JPanel
 				blackHoleY = event.getY();
 			
 				//repaint();				
+				
+			}
+			
+			if(addingGoal == true) {
+				
+				goalX = event.getX();
+			    goalY = event.getY();
 				
 			}
 
@@ -332,9 +373,20 @@ public class Board extends JPanel
         	
         }
         
+        if(gol != null) {
+        	g2d.drawRect( gol.getX_Coord(), gol.getY_Coord(), 10, 10);        	
+        }
+
+        
         if(addingBlackHole == true) {
         	
         	g2d.drawOval(blackHoleX, blackHoleY, 10, 10);
+        	
+        }
+        
+        if(addingGoal == true) {
+        	
+        	g2d.drawRect(goalX, goalY, 10, 10);
         	
         }
         
@@ -376,6 +428,15 @@ public class Board extends JPanel
     		cat1.setAcceleration(ax, ay);
     		cat1.accelerate();
     		cat1.move();
+    		
+    	}
+    	
+    	if(gol != null && cat1.getX_Coord() < gol.getX_Coord() + 20 && cat1.getX_Coord() > gol.getX_Coord() - 20 
+    			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
+    		
+			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
+			System.out.println(f1.getString());
+    		//setVisible(false);
     		
     	}
     	

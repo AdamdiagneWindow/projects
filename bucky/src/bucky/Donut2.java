@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 public class Donut2 extends JFrame {
     
 	JPanel gamePanel;
+	String test = " test";
 	final static String TITLEPANEL = "Card with TitleScreen";
 	final static String GAMEPANEL = "Card with BoardPanel";
 	
@@ -44,7 +45,7 @@ public class Donut2 extends JFrame {
         
        title titlePanel = new title(cl, gamePanel, GAMEPANEL);
         
-    	Board board = new Board();
+    	Board board = new Board(cl, gamePanel);
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
     	gamePanel.add(board, GAMEPANEL);
@@ -66,6 +67,10 @@ public class Donut2 extends JFrame {
         
         
     }    
+    
+    public String getString() {
+    	return test;
+    }
     
     public static void main(String[] args) {
 
