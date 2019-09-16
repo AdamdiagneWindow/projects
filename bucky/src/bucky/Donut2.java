@@ -45,7 +45,7 @@ public class Donut2 extends JFrame {
         
        title titlePanel = new title(cl, gamePanel, GAMEPANEL);
         
-    	Board board = new Board(cl, gamePanel);
+    	Board board = new Board();
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
     	gamePanel.add(board, GAMEPANEL);

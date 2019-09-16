@@ -18,6 +18,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.*;
+import java.io.*;
+import java.util.*;
+import java.util.List;
+
 
 import java.awt.BorderLayout;
 
@@ -26,6 +30,7 @@ import java.awt.BorderLayout;
 public class Board extends JPanel 
 		implements Runnable{
 
+	private Scanner scan;
 	
 	private final int width = 600;
 	private final int height = 600;
@@ -38,6 +43,8 @@ public class Board extends JPanel
 	
 
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
+	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
+	private List<Integer> starInitX, starInitY, blackInitX, blackInitY;
 	
 	private double angle, tanAngle;
 
@@ -57,16 +64,27 @@ public class Board extends JPanel
 	private gravitationalField gravityField;
 	private cat cat1;
 	private star star1;
+	private List<star> starList;
 	private goal gol;
 	
 	
-	public Board(CardLayout cl, Container pane) {
+	public Board() {
 		
-		initBoard(cl, pane);
+		initBoard();
 	}
 	
-	private void initBoard(final CardLayout cl, final Container pane) {
+	private void initBoard() {
+
+		starInitX = new ArrayList<Integer>();
+		starInitY = new ArrayList<Integer>();
+		blackInitX = new ArrayList<Integer>();
+		blackInitY = new ArrayList<Integer>();
 		
+		starList = new ArrayList<star>();
+		
+		openFile();
+		readFile();
+		closeFile();		
 		
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(width, height));
@@ -76,11 +94,29 @@ public class Board extends JPanel
 		
 		gravityField = new gravitationalField(width, height);
 		
-		cat1 = new cat(300, 300, 0, 0, 0, 0, 10);
 		
-		star1 = new star(100, 100, 10);
-
+		/*
+		cat1 = new cat(300, 300, 0, 0, 0, 0, 10); // read cat position
 		
+		star1 = new star(100, 100, 10); // read star position
+	*/
+		
+		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+		for(int i = 0; i < starInitX.size(); i++) {
+			
+			star s = new star(starInitX.get(i), starInitY.get(i), 10);
+			starList.add(s);
+			
+		}
+		
+		for(int i = 0; i < blackInitX.size(); i++) {
+			
+	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5);
+	    	gravityField.addBlackHole(b);
+			
+		}
+		
+		gol = new goal(goalInitX, goalInitY, 10);
 
 		
 		displayPanel = new JPanel();
@@ -158,7 +194,7 @@ public class Board extends JPanel
 		    	y = currentY;
 		    	*/
 		    	
-		    	cat1.setPosition(currentX, currentY);
+		    	cat1.setPosition(currentX, currentY);       // write cat position
 		    	cat1.setVelocity(0, 0);
 			    cat1.setAcceleration(0, 0);
 			
@@ -171,7 +207,7 @@ public class Board extends JPanel
 		    
 		    if (addingBlackHole == true) {
 		    	
-		    	blackHole b = new blackHole(event.getX(), event.getY(), 5);
+		    	blackHole b = new blackHole(event.getX(), event.getY(), 5);      // write black hole position
 		    	gravityField.addBlackHole(b);
 		    	
 		    	addingBlackHole = false;
@@ -186,7 +222,7 @@ public class Board extends JPanel
 		    		gol = new goal(event.getX(), event.getY(), 10);
 		    	}
 		    	else {
-		    		gol.setPosition(event.getX(), event.getY());		    		
+		    		gol.setPosition(event.getX(), event.getY());		    		 // write goal position
 		    	}
 		    	
 		    	addingGoal = false;
@@ -200,6 +236,9 @@ public class Board extends JPanel
 			
 		
 		}
+		
+		
+
 		
 		public void mousePressed(MouseEvent event) {
 			
@@ -296,7 +335,86 @@ public class Board extends JPanel
 	}
 	
 	
+	private void openFile() {
+		
+		try {
+			scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
+		}
+		catch(Exception e) {
+			System.out.println("could not find file");
+		}
+		
+		
+	}
 	
+	private void readFile() {
+		String string = " ";
+		String object = " ";
+		int coord = 0;
+		int inCount = 0;
+		while(scan.hasNext()) {
+			string = scan.next();					
+			if(string.contentEquals("cat") || string.contentEquals("star") || string.contentEquals("blackHole") || string.contentEquals("goal")) {	
+				object = string;
+			}
+			else {
+
+				if(object.contentEquals("cat")) {
+					if(coord == 0) {
+						catInitX = Integer.parseInt(string);
+					}
+					else {
+						catInitY = Integer.parseInt(string);
+					}
+				}
+
+				if(object.contentEquals("star")) {
+					if(coord == 0) {
+						starInitX.add(Integer.parseInt(string));
+					}
+					else {
+						starInitY.add(Integer.parseInt(string));
+					}					
+					
+				}
+
+				if(object.contentEquals("blackHole")) {
+					
+					if(coord == 0) {
+
+						blackInitX.add(Integer.parseInt(string));
+					}
+					else {
+					
+						blackInitY.add(Integer.parseInt(string));
+					}					
+				}
+
+				if(object.contentEquals("goal")) {
+					if(coord == 0) {
+						goalInitX = Integer.parseInt(string);
+					}
+					else {
+						goalInitY = Integer.parseInt(string);
+					}			
+					System.out.println(string);
+
+					
+				}
+
+				coord ^= 1;
+			}
+			
+			
+		}
+		
+
+	}
+	
+	private void closeFile() {
+		System.out.println(starInitY);
+		scan.close();
+	}
 	
 	
 	
@@ -321,7 +439,7 @@ public class Board extends JPanel
     	Image image = null ;
     	Image propImage = null;
     	
-    	propImage = star1.getNextSprite();
+    	//propImage = star1.getNextSprite();
     	
     	if(cat1.getStationary() == true) {
     		
@@ -364,8 +482,13 @@ public class Board extends JPanel
         
         g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
         
-        g2d.drawImage(propImage, star1.getX_Coord(), star1.getY_Coord(), this);
+        //g2d.drawImage(propImage, star1.getX_Coord(), star1.getY_Coord(), this);
         
+        for (star s : starList) {
+        	propImage = s.getNextSprite();
+            g2d.drawImage(propImage, s.getX_Coord(), s.getY_Coord(), this);
+        	
+        }
         
         for (blackHole b : gravityField.getBlackHoleList()) {
         	
@@ -435,7 +558,7 @@ public class Board extends JPanel
     			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
     		
 			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
-			System.out.println(f1.getString());
+			//System.out.println(f1.getString());
     		//setVisible(false);
     		
     	}
