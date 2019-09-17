@@ -15,6 +15,10 @@ public class Donut2 extends JFrame {
 	String test = " test";
 	final static String TITLEPANEL = "Card with TitleScreen";
 	final static String GAMEPANEL = "Card with BoardPanel";
+	final static String LEVELTITLE = "Card with LevelTitle";
+	
+	Board board;
+	levelTitle levTitle;
 	
     public Donut2() {
 
@@ -43,12 +47,14 @@ public class Donut2 extends JFrame {
     	*/
     		
         
-       title titlePanel = new title(cl, gamePanel, GAMEPANEL);
+       title titlePanel = new title(cl, gamePanel, LEVELTITLE);
         
-    	Board board = new Board();
+    	board = new Board();
+    	levTitle = new levelTitle();
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
     	gamePanel.add(board, GAMEPANEL);
+    	gamePanel.add(levTitle, LEVELTITLE);
     	
        
         cl.show(gamePanel, TITLEPANEL);   	
@@ -71,6 +77,15 @@ public class Donut2 extends JFrame {
     public String getString() {
     	return test;
     }
+    
+    public Board getBoard() {
+    	return board; 
+    }
+    
+    public levelTitle getLevelTitle() {
+    	return levTitle;
+    }
+    
     
     public static void main(String[] args) {
 

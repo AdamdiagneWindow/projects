@@ -11,7 +11,6 @@ import java.awt.Image;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -32,14 +31,10 @@ public class Board extends JPanel
 
 	private Scanner scan;
 	
-	private final int width = 600;
-	private final int height = 600;
+	private final int width = 800;
+	private final int height = 800;
 	private final int delay = 25;
 	private Thread animator;
-	private int imageCount = 0;
-	private int animationDelayFlying = 0;
-	private int animationDelayStationary = 10;
-	private int animationCount = 0;
 	
 
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
@@ -63,7 +58,6 @@ public class Board extends JPanel
 	
 	private gravitationalField gravityField;
 	private cat cat1;
-	private star star1;
 	private List<star> starList;
 	private goal gol;
 	
@@ -111,7 +105,7 @@ public class Board extends JPanel
 		
 		for(int i = 0; i < blackInitX.size(); i++) {
 			
-	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5);
+	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
 	    	gravityField.addBlackHole(b);
 			
 		}
@@ -200,14 +194,13 @@ public class Board extends JPanel
 			
 			    cat1.setStationary(true);
 			    cat1.resetPropAnimation(10);
-			    imageCount = 0;
 			
 			    //repaint();	
 		    }
 		    
 		    if (addingBlackHole == true) {
 		    	
-		    	blackHole b = new blackHole(event.getX(), event.getY(), 5);      // write black hole position
+		    	blackHole b = new blackHole(event.getX(), event.getY(), 5, 10);      // write black hole position
 		    	gravityField.addBlackHole(b);
 		    	
 		    	addingBlackHole = false;
@@ -437,7 +430,7 @@ public class Board extends JPanel
 
     	
     	Image image = null ;
-    	Image propImage = null;
+    	//Image propImage = null;
     	
     	//propImage = star1.getNextSprite();
     	
@@ -482,17 +475,17 @@ public class Board extends JPanel
         
         g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
         
-        //g2d.drawImage(propImage, star1.getX_Coord(), star1.getY_Coord(), this);
         
         for (star s : starList) {
-        	propImage = s.getNextSprite();
-            g2d.drawImage(propImage, s.getX_Coord(), s.getY_Coord(), this);
+        	image = s.getNextSprite();
+            g2d.drawImage(image, s.getX_Coord(), s.getY_Coord(), this);
         	
         }
         
         for (blackHole b : gravityField.getBlackHoleList()) {
         	
-            g2d.drawOval(b.getX_Coord(), b.getY_Coord(), 10, 10);
+        	image = b.getNextSprite();
+            g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
         	
         }
         
@@ -558,31 +551,24 @@ public class Board extends JPanel
     			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
     		
 			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
+			
 			//System.out.println(f1.getString());
     		//setVisible(false);
     		
     	}
     	
     	
-    	
-    	
-    	if(x > width) {
-    		cat1.setPosition(0, cat1.getY_Coord());
+    	if(x > width || x < 0 || y > height || y < 0) {
+    		
+	    	cat1.setPosition(currentX, currentY);       // write cat position
+	    	cat1.setVelocity(0, 0);
+		    cat1.setAcceleration(0, 0);
+		
+		    cat1.setStationary(true);
+		    cat1.resetPropAnimation(10);
     	}
     	
-    	if(x < 0) {
-    		cat1.setPosition(width, cat1.getY_Coord());
-    	}
-    	
-    	if(y > height ) {
-    		cat1.setPosition(cat1.getX_Coord(), 0);
-    	}
-    	
-    	if(y < 0) {
-    		cat1.setPosition(cat1.getX_Coord(), height);
-    	}
-    	
-    	//System.out.println(angle);
+
     	
     }
     

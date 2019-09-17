@@ -27,12 +27,12 @@ public class cat extends projectileNew {
 		
  
 		addRotationSprites(9, pulledSprites, "src/resources/catPulled45.png" );
-		addRotationSprites(9, flyingSprites, "src/resources/catFlying1.png" );
+		addRotationSprites(9, flyingSprites, "src/resources/catFlying.png" );
 		
-		addSprite("src/resources/cat.png");
-		addSprite("src/resources/cat1.png");
-		addSprite("src/resources/cat2.png");
-		addSprite("src/resources/cat3.png");
+		addSprite("src/resources/catNew.png");
+		addSprite("src/resources/catNew1.png");
+		addSprite("src/resources/catNew2.png");
+		addSprite("src/resources/catNew3.png");
 	}
 	
 	public void animateVarDelay() {

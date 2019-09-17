@@ -1,34 +1,26 @@
 package bucky;
 
-public class blackHole {
+public class blackHole extends prop{
+
+	protected double mass;
 	
-	private int x_Coord;
-	private int y_Coord;
-	private double mass;
-	
-	
-	
-	public blackHole(int x, int y, double m) {
+	public blackHole(int x, int y, double m, int delay) {
 		
 		x_Coord = x;
 		y_Coord = y;
 		mass = m;
+		frameDelay = delay;
 		
-	}
-	
-	public int getX_Coord() {
-		
-		return x_Coord;
-	}
-	
-	public int getY_Coord() {
-		
-		return y_Coord;
+		addSprite("src/resources/blackHole.png");
+		addSprite("src/resources/blackHole1.png");
+		addSprite("src/resources/blackHole2.png");
+		addSprite("src/resources/blackHole3.png");
 	}
 	
 	public double getMass() {
 		
-		return mass;	
+		return mass;
+		
 	}
 	
 	public void updateProperties(int x, int y, double m) {
@@ -37,8 +29,6 @@ public class blackHole {
 		y_Coord = y;
 		mass = m;		
 		
-	}
-	
-	
+	}	
 	
 }
