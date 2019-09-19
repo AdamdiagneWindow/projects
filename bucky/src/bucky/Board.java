@@ -20,17 +20,18 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-
-
 import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+
 
 
 
 public class Board extends JPanel 
 		implements Runnable{
 
-	private Scanner scan;
-	
+
 	private final int width = 800;
 	private final int height = 800;
 	private final int delay = 25;
@@ -47,7 +48,7 @@ public class Board extends JPanel
 	private boolean addingBlackHole = false;
 	private boolean addingGoal = false;
 	
-    private JLabel label, label2;
+    private JLabel label;
     
     private JPanel displayPanel;
     private JPanel inputPanel;
@@ -75,97 +76,15 @@ public class Board extends JPanel
 		blackInitY = new ArrayList<Integer>();
 		
 		starList = new ArrayList<star>();
+		gravityField = new gravitationalField(width, height);		
 		
-		openFile();
-		readFile();
-		closeFile();		
-		
-		setBackground(Color.BLACK);
-		setPreferredSize(new Dimension(width, height));
-		setSize(width, height);
-		setLayout(new BorderLayout());
-		
-		
-		gravityField = new gravitationalField(width, height);
-		
-		
-		/*
-		cat1 = new cat(300, 300, 0, 0, 0, 0, 10); // read cat position
-		
-		star1 = new star(100, 100, 10); // read star position
-	*/
-		
-		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
-		for(int i = 0; i < starInitX.size(); i++) {
-			
-			star s = new star(starInitX.get(i), starInitY.get(i), 10);
-			starList.add(s);
-			
-		}
-		
-		for(int i = 0; i < blackInitX.size(); i++) {
-			
-	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
-	    	gravityField.addBlackHole(b);
-			
-		}
-		
-		gol = new goal(goalInitX, goalInitY, 10);
+		setProps();	   //Read props data from level file and initializes props
+		setCanvasAppearance(); //Sets JPanel general appearance
+		setDisplayPanel(); // Sets stat display panel at top of screen
+		setInputPanel(); // Sets input buttons at button of panel
+		setEventHandlers(); //Sets event handlers
+		addElements();  //Adds panels to screen
 
-		
-		displayPanel = new JPanel();
-		displayPanel.setPreferredSize(new Dimension(width, 50));
-		
-
-		label = new JLabel(".................");
-		label.setFont(new Font("Tahoma", Font.BOLD, 10));
-		label.setBounds(10,10, 500, 20);  
-		displayPanel.add(label);		
-		
-		label2 = new JLabel(".................");
-		label2.setFont(new Font("Tahoma", Font.BOLD, 10));
-		label2.setBounds(10,30, 500, 20);  
-		displayPanel.add(label2);		
-		
-		inputPanel = new JPanel();
-		inputPanel.setPreferredSize(new Dimension(width, 20));
-		inputPanel.setLayout(null);
-		
-		
-		addBlackHole = new JButton();
-		addBlackHole.setBounds(0, 0, 20, 20);
-		addBlackHole.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				addingBlackHole = true;
-				
-			}
-			
-		});
-		
-		addGoal = new JButton();
-		addGoal.setBounds(20, 0, 20, 20);
-		addGoal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				addingGoal = true;
-				
-			}
-			
-		});
-		
-		
-		inputPanel.add(addBlackHole);
-		inputPanel.add(addGoal);
-		
-		
-		
-	    this.add(displayPanel, BorderLayout.NORTH);
-	    this.add(inputPanel, BorderLayout.SOUTH);
-		
-		HandlerClass handler = new HandlerClass();
-		this.addMouseListener(handler);
-		this.addMouseMotionListener(handler);
 
 		
 	}
@@ -183,19 +102,8 @@ public class Board extends JPanel
 		    
 		    if(addingBlackHole == false && addingGoal == false) {
 		    	
-		    	/*
-		    	x = currentX;
-		    	y = currentY;
-		    	*/
-		    	
-		    	cat1.setPosition(currentX, currentY);       // write cat position
-		    	cat1.setVelocity(0, 0);
-			    cat1.setAcceleration(0, 0);
-			
-			    cat1.setStationary(true);
-			    cat1.resetPropAnimation(10);
-			
-			    //repaint();	
+		    	resetCat(currentX, currentY);
+				
 		    }
 		    
 		    if (addingBlackHole == true) {
@@ -328,85 +236,20 @@ public class Board extends JPanel
 	}
 	
 	
-	private void openFile() {
+	private void setProps() {
 		
-		try {
-			scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
+
+		try (FileReader reader = new FileReader("src/resources/levelParameters/levelTest.txt");
+				BufferedReader br = new BufferedReader(reader)){
+			readPropData(br);
+			initProps();
+			//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
 		}
-		catch(Exception e) {
-			System.out.println("could not find file");
-		}
-		
-		
-	}
-	
-	private void readFile() {
-		String string = " ";
-		String object = " ";
-		int coord = 0;
-		int inCount = 0;
-		while(scan.hasNext()) {
-			string = scan.next();					
-			if(string.contentEquals("cat") || string.contentEquals("star") || string.contentEquals("blackHole") || string.contentEquals("goal")) {	
-				object = string;
-			}
-			else {
-
-				if(object.contentEquals("cat")) {
-					if(coord == 0) {
-						catInitX = Integer.parseInt(string);
-					}
-					else {
-						catInitY = Integer.parseInt(string);
-					}
-				}
-
-				if(object.contentEquals("star")) {
-					if(coord == 0) {
-						starInitX.add(Integer.parseInt(string));
-					}
-					else {
-						starInitY.add(Integer.parseInt(string));
-					}					
-					
-				}
-
-				if(object.contentEquals("blackHole")) {
-					
-					if(coord == 0) {
-
-						blackInitX.add(Integer.parseInt(string));
-					}
-					else {
-					
-						blackInitY.add(Integer.parseInt(string));
-					}					
-				}
-
-				if(object.contentEquals("goal")) {
-					if(coord == 0) {
-						goalInitX = Integer.parseInt(string);
-					}
-					else {
-						goalInitY = Integer.parseInt(string);
-					}			
-					System.out.println(string);
-
-					
-				}
-
-				coord ^= 1;
-			}
-			
-			
+		catch(IOException e) {
+    		e.printStackTrace();
 		}
 		
-
-	}
-	
-	private void closeFile() {
-		System.out.println(starInitY);
-		scan.close();
+		
 	}
 	
 	
@@ -426,38 +269,8 @@ public class Board extends JPanel
 	
 	
     private void doDrawing(Graphics g) {
-    	
-
-    	
+    
     	Image image = null ;
-    	//Image propImage = null;
-    	
-    	//propImage = star1.getNextSprite();
-    	
-    	if(cat1.getStationary() == true) {
-    		
-    		image = cat1.getNextSprite();
-    		
-    	}
-    	
-    	if(drag == true && dragX != 0 && dragY != 0 && presX != 0 && presY != 0 && presX != dragX) {
-    		
-    		tanAngle = ((double)dragY - (double)presY)/((double)dragX - (double)presX);
-    		angle = Math.atan(tanAngle)*180.00/Math.PI;
-    		//image = cat.getPulledSprite((int)(Math.round(angle/40)));
-    		
-    	}
-    	
-    	
-    	if(cat1.getStationary() == false) {
-    		
-    		image = cat1.getNextFlyingSprite();
-    		
-    	}
-    	
-    	
-    	
-    	
     	
     	Graphics2D g2d = (Graphics2D) g;
     	
@@ -470,52 +283,19 @@ public class Board extends JPanel
         rh.put(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         
-        g2d.setRenderingHints(rh);      	
-                
+        g2d.setRenderingHints(rh);   
+    	
+    	//Image propImage = null;
+    	
+    	//propImage = star1.getNextSprite();
+  
         
-        g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+        drawCat(image, g2d);
+        drawStar(image, g2d);
+        drawBlackHole(image, g2d);
+        drawGoal(image, g2d);
+        drawLine(g);
         
-        
-        for (star s : starList) {
-        	image = s.getNextSprite();
-            g2d.drawImage(image, s.getX_Coord(), s.getY_Coord(), this);
-        	
-        }
-        
-        for (blackHole b : gravityField.getBlackHoleList()) {
-        	
-        	image = b.getNextSprite();
-            g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
-        	
-        }
-        
-        if(gol != null) {
-        	g2d.drawRect( gol.getX_Coord(), gol.getY_Coord(), 10, 10);        	
-        }
-
-        
-        if(addingBlackHole == true) {
-        	
-        	g2d.drawOval(blackHoleX, blackHoleY, 10, 10);
-        	
-        }
-        
-        if(addingGoal == true) {
-        	
-        	g2d.drawRect(goalX, goalY, 10, 10);
-        	
-        }
-        
-        
-        if(dragX == 0 && dragY == 0) {
-        	
-        	dragX = presX;
-        	dragY = presY;
-        }
-        
-        g.drawLine(presX, presY, dragX, dragY);
-       
-        		
     }
     
     @Override
@@ -555,17 +335,13 @@ public class Board extends JPanel
 			//System.out.println(f1.getString());
     		//setVisible(false);
     		
+			
     	}
     	
     	
     	if(x > width || x < 0 || y > height || y < 0) {
     		
-	    	cat1.setPosition(currentX, currentY);       // write cat position
-	    	cat1.setVelocity(0, 0);
-		    cat1.setAcceleration(0, 0);
-		
-		    cat1.setStationary(true);
-		    cat1.resetPropAnimation(10);
+    		resetCat(300, 300);
     	}
     	
 
@@ -615,7 +391,252 @@ public class Board extends JPanel
     	
     }
     
-    
+    private int readStringAsInt(int integer, String string) {
+    	int newInt = 0;
+    	if(string.contentEquals("all")) {	
+    	    	return integer;
 
+    	    	
+    	}
+    	else {
+    		    newInt = Integer.parseInt(string);	
+    	    	return newInt;
+    	}
+
+    	
+    }
+    
+    private void addStringToIntList(List<Integer> intList, String string) {
+    	
+    	if(string.contentEquals("all")) {
+	    		
+    	}
+    	else {
+    		intList.add(Integer.parseInt(string));
+    	}
+    	
+    	
+    }
+    
+    private void readPropData(BufferedReader br) {
+    	try {
+    		String line;
+    		while ((line = br.readLine()) != null) {
+    			String[] parts = line.split(" ");
+   
+    			catInitX = readStringAsInt(catInitX, parts[0]);
+    			catInitY = readStringAsInt(catInitY, parts[1]);
+    			addStringToIntList(starInitX, parts[2]);
+    			addStringToIntList(starInitY, parts[3]);
+    			addStringToIntList(blackInitX, parts[4]);
+    			addStringToIntList(blackInitY, parts[5]);   
+    			goalInitX = readStringAsInt(goalInitX, parts[6]);
+    			goalInitY = readStringAsInt(goalInitY, parts[7]);
+
+
+            
+    		}	    		
+    	} catch(IOException e) {
+    		e.printStackTrace();
+    	}
+
+    	
+    }
+    
+    private void initProps() {
+		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+		
+		for(int i = 0; i < starInitX.size(); i++) {
+			
+			star s = new star(starInitX.get(i), starInitY.get(i), 10);
+			starList.add(s);
+			
+		}
+		
+		for(int i = 0; i < blackInitX.size(); i++) {
+			
+	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
+	    	gravityField.addBlackHole(b);
+			
+		}
+		gol = new goal(goalInitX, goalInitY, 10);
+		//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
+    }
+    
+    private void setDisplayPanel() {
+    	
+		displayPanel = new JPanel();
+		displayPanel.setPreferredSize(new Dimension(width, 20));
+		
+
+		label = new JLabel(".................");
+		label.setFont(new Font("Tahoma", Font.BOLD, 10));
+		label.setBounds(10,10, 500, 20);  
+		displayPanel.add(label);
+    }
+    
+    private void setInputPanel() {
+    	
+		inputPanel = new JPanel();
+		inputPanel.setPreferredSize(new Dimension(width, 20));
+		inputPanel.setLayout(null);
+		addBlackHole = new JButton();
+		addBlackHole.setBounds(0, 0, 20, 20);
+		addBlackHole.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addingBlackHole = true;
+				
+			}
+			
+		});
+		
+		addGoal = new JButton();
+		addGoal.setBounds(20, 0, 20, 20);
+		addGoal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addingGoal = true;
+				
+			}
+			
+		});
+
+		inputPanel.add(addBlackHole);
+		inputPanel.add(addGoal);    	
+    	
+    }
+    
+    private void addElements() {
+    	
+	    this.add(displayPanel, BorderLayout.NORTH);
+	    this.add(inputPanel, BorderLayout.SOUTH);
+    }
+    
+    private void setEventHandlers() {
+    	
+		HandlerClass handler = new HandlerClass();
+		this.addMouseListener(handler);
+		this.addMouseMotionListener(handler);
+    }
+    
+    private void setCanvasAppearance() {
+    	
+		setBackground(Color.BLACK);
+		setPreferredSize(new Dimension(width, height));    //setCanvasAppearance
+		setSize(width, height);
+		setLayout(new BorderLayout());
+    }
+    
+    
+    private void resetCat(int x, int y) {
+    	cat1.setPosition(x, y);       // write cat position
+    	cat1.setVelocity(0, 0);
+	    cat1.setAcceleration(0, 0);
+	
+	    cat1.setStationary(true);
+	    cat1.resetPropAnimation(10);   	
+    	
+    }
+    
+    private void calculateDragAngle() {
+    	
+		tanAngle = ((double)dragY - (double)presY)/((double)dragX - (double)presX);
+		angle = Math.atan(tanAngle)*180.00/Math.PI;
+		
+		if(presX < dragX && presY < dragY) {
+			angle = angle;
+		}
+		
+		if(presX > dragX && presY > dragY) {
+			angle = angle + 180;
+		}
+		
+		if(presX > dragX && presY < dragY) {
+			angle = angle + 180;
+		}
+			
+		if(presX < dragX && presY > dragY) {
+			angle = angle + 360;
+		}
+    	
+    }
+    
+    private void drawCat(Image image, Graphics2D g2d) {
+    	
+    	System.out.println("in!");
+    	if(cat1.getStationary() == true) {
+    		
+    		image = cat1.getNextSprite();
+    		
+    	}
+    	
+    	if(drag == true && dragX != 0 && dragY != 0 && presX != 0 && presY != 0 && presX != dragX) {
+    		 
+    		calculateDragAngle();
+    		image = cat1.getPulledSprite(angle);
+    		label.setText("angle" + angle);
+    		
+    		
+    	}
+    	
+    	
+    	if(cat1.getStationary() == false) {
+    		
+    		image = cat1.getNextFlyingSprite();
+    		
+    	}
+    	
+    	g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+    }
+    
+    private void drawStar(Image image, Graphics2D g2d) {
+        for (star s : starList) {
+        	image = s.getNextSprite();
+            g2d.drawImage(image, s.getX_Coord(), s.getY_Coord(), this);
+        	
+        }
+    }
+    
+    private void drawBlackHole(Image image, Graphics2D g2d) {
+        for (blackHole b : gravityField.getBlackHoleList()) {
+        	
+        	image = b.getNextSprite();
+            g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
+        	
+        }
+
+        if(addingBlackHole == true) {
+        	
+        	g2d.drawOval(blackHoleX, blackHoleY, 10, 10);
+        	
+        }
+        
+    }
  
+    private void drawGoal(Image image, Graphics2D g2d) {
+    	
+        if(gol != null) {
+        	g2d.drawRect( gol.getX_Coord(), gol.getY_Coord(), 10, 10);        	
+        }
+        
+        if(addingGoal == true) {
+        	
+        	g2d.drawRect(goalX, goalY, 10, 10);
+        	
+        }
+    	
+    }
+    
+    private void drawLine(Graphics g) {
+    	
+        if(dragX == 0 && dragY == 0) {
+        	
+        	dragX = presX;
+        	dragY = presY;
+        }
+        
+        g.drawLine(presX, presY, dragX, dragY);    	
+    }
+    
 }

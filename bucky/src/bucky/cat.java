@@ -7,6 +7,7 @@ import java.util.List;
 public class cat extends projectileNew {
 
 	private List<Image>  pulledSprites, flyingSprites;
+	private int rotationFrames = 9;
 	
 	public cat (int x, int y, double vx, double vy, double ax, double ay, int delay) {
 		
@@ -26,8 +27,8 @@ public class cat extends projectileNew {
 		frameDelay = delay;
 		
  
-		addRotationSprites(9, pulledSprites, "src/resources/catPulled45.png" );
-		addRotationSprites(9, flyingSprites, "src/resources/catFlying.png" );
+		addRotationSprites(rotationFrames, pulledSprites, "src/resources/catPulled45.png" );
+		addRotationSprites(rotationFrames, flyingSprites, "src/resources/catFlying.png" );
 		
 		addSprite("src/resources/catNew.png");
 		addSprite("src/resources/catNew1.png");
@@ -61,9 +62,13 @@ public class cat extends projectileNew {
 	
 
 	
-	public Image getPulledSprite() {
+	public Image getPulledSprite(double angle) {
 		
-		return pulledSprites.get(imageIndex);
+		int angleIndex = (int)(Math.round(angle/40));
+		if(angleIndex == rotationFrames) {
+			angleIndex = 0;
+		}
+		return pulledSprites.get(angleIndex);
 	}	
 	
 	public Image getNextFlyingSprite() {
