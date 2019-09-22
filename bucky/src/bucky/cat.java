@@ -4,10 +4,13 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
-public class cat extends projectileNew {
+import javax.swing.ImageIcon;
 
+public class cat extends projectileNew {
+	
+	private String flyingSpritesDir = "src/resources/catFlying.png", pulledSpritesDir = "src/resources/catPulledExp.png";
 	private List<Image>  pulledSprites, flyingSprites;
-	private int rotationFrames = 9;
+	private int rotationFrames = 9, pulledWidth, pulledHeight;
 	
 	public cat (int x, int y, double vx, double vy, double ax, double ay, int delay) {
 		
@@ -27,13 +30,14 @@ public class cat extends projectileNew {
 		frameDelay = delay;
 		
  
-		addRotationSprites(rotationFrames, pulledSprites, "src/resources/catPulled45.png" );
-		addRotationSprites(rotationFrames, flyingSprites, "src/resources/catFlying.png" );
+		addRotationSprites(rotationFrames, pulledSprites, pulledSpritesDir );
+		addRotationSprites(rotationFrames, flyingSprites, flyingSpritesDir);
+		setPulledDimensions(pulledSpritesDir);
 		
-		addSprite("src/resources/catNew.png");
-		addSprite("src/resources/catNew1.png");
-		addSprite("src/resources/catNew2.png");
-		addSprite("src/resources/catNew3.png");
+		addSprite("src/resources/catBubble.png");
+		addSprite("src/resources/catBubble1.png");
+		addSprite("src/resources/catBubble2.png");
+		addSprite("src/resources/catBubble3.png");
 	}
 	
 	public void animateVarDelay() {
@@ -55,6 +59,25 @@ public class cat extends projectileNew {
 		
 	}
 	
+	public void setPulledDimensions(String directory) {
+		
+		Image im;
+		ImageIcon icon = new ImageIcon(directory);
+		im = icon.getImage();
+		pulledWidth = im.getWidth(null);
+		pulledHeight = im.getHeight(null);
+		
+	}
+	
+	public int getPulledWidth() {
+		return pulledWidth;
+	}
+	
+	public int getPulledHeight() {
+		return pulledHeight;
+	}
+	
+	
 	public Image getFlyingSprite() {
 		
 		return flyingSprites.get(imageIndex);
@@ -70,6 +93,7 @@ public class cat extends projectileNew {
 		}
 		return pulledSprites.get(angleIndex);
 	}	
+
 	
 	public Image getNextFlyingSprite() {
 		

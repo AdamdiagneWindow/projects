@@ -44,7 +44,7 @@ public class Board extends JPanel
 	
 	private double angle, tanAngle;
 
-	private boolean drag = false;
+	private boolean drag = false, flipCat = false;
 	private boolean addingBlackHole = false;
 	private boolean addingGoal = false;
 	
@@ -284,10 +284,6 @@ public class Board extends JPanel
                 RenderingHints.VALUE_RENDER_QUALITY);
         
         g2d.setRenderingHints(rh);   
-    	
-    	//Image propImage = null;
-    	
-    	//propImage = star1.getNextSprite();
   
         
         drawCat(image, g2d);
@@ -543,7 +539,7 @@ public class Board extends JPanel
     	
 		tanAngle = ((double)dragY - (double)presY)/((double)dragX - (double)presX);
 		angle = Math.atan(tanAngle)*180.00/Math.PI;
-		
+		/*
 		if(presX < dragX && presY < dragY) {
 			angle = angle;
 		}
@@ -558,13 +554,37 @@ public class Board extends JPanel
 			
 		if(presX < dragX && presY > dragY) {
 			angle = angle + 360;
+		}*/
+		if(presX < dragX && presY < dragY) {
+			angle = angle + 90;
 		}
+		
+		if(presX > dragX && presY > dragY) {
+			angle = angle + 270;
+		}
+		
+		if(presX > dragX && presY < dragY) {
+			angle = angle + 270;
+		}
+			
+		if(presX < dragX && presY > dragY) {
+			angle = angle + 90;
+		}
+		
+		if(angle < 180) {
+			flipCat = false;
+		}
+		if(angle > 180) {
+			flipCat = true;
+			angle = 180 - (angle - 180);
+		}
+
     	
     }
     
     private void drawCat(Image image, Graphics2D g2d) {
     	
-    	System.out.println("in!");
+    	
     	if(cat1.getStationary() == true) {
     		
     		image = cat1.getNextSprite();
@@ -587,7 +607,15 @@ public class Board extends JPanel
     		
     	}
     	
-    	g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+    	if(flipCat == true) {
+    		
+    		System.out.println("flipped");
+    		g2d.drawImage(image, cat1.getX_Coord() + cat1.getPulledWidth()/2, cat1.getY_Coord() - cat1.getPulledHeight()/2, -cat1.getPulledWidth(), cat1.getPulledHeight(), this);
+    	}
+    	else {
+    		g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+    	}
+    	
     }
     
     private void drawStar(Image image, Graphics2D g2d) {

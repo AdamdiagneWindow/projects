@@ -40,7 +40,7 @@ public class projectileNew extends prop{
 		ImageIcon icon  = new ImageIcon(spriteDirectory);
 		image = icon.getImage();
 		
-		for(int i = 1; i <= numOfFrames; i++) {
+		for(int i = 0; i < numOfFrames; i++) {
 			
 			Image rotated = rotator.rotateImageByDegrees(image, (360/numOfFrames)*i);
 				

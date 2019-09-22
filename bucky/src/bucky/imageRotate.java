@@ -44,7 +44,8 @@ public class imageRotate extends JPanel {
 
 	        return rotated;
 	  }	
-	
+	  
+	  
 	
 	public static void main(String[] args) throws IOException {
 	
