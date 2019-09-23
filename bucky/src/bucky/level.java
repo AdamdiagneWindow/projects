@@ -28,7 +28,7 @@ import java.io.FileReader;
 
 
 
-public class Board extends JPanel 
+public class level extends JPanel 
 		implements Runnable{
 
 
@@ -36,8 +36,8 @@ public class Board extends JPanel
 	private final int height = 800;
 	private final int delay = 25;
 	private Thread animator;
-	
 
+	
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
 	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
 	private List<Integer> starInitX, starInitY, blackInitX, blackInitY;
@@ -61,15 +61,17 @@ public class Board extends JPanel
 	private cat cat1;
 	private List<star> starList;
 	private goal gol;
+	private String dir;
 	
-	
-	public Board() {
+	public level(String directory) {
 		
-		initBoard();
+		initLevel(directory);
 	}
 	
-	private void initBoard() {
-
+	private void initLevel(String directory) {
+		
+		dir = directory;
+	
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
 		blackInitX = new ArrayList<Integer>();
@@ -81,7 +83,7 @@ public class Board extends JPanel
 		setProps();	   //Read props data from level file and initializes props
 		setCanvasAppearance(); //Sets JPanel general appearance
 		setDisplayPanel(); // Sets stat display panel at top of screen
-		setInputPanel(); // Sets input buttons at button of panel
+		//setInputPanel(); // Sets input buttons at button of panel
 		setEventHandlers(); //Sets event handlers
 		addElements();  //Adds panels to screen
 
@@ -93,47 +95,6 @@ public class Board extends JPanel
 	
 	private class HandlerClass implements MouseListener, MouseMotionListener{
 		public void mouseClicked(MouseEvent event) {
-			
-			
-			currentX = event.getX();
-			currentY = event.getY();
-			label.setText("x = " + currentX + "     y = " + currentY);								
-			
-		    
-		    if(addingBlackHole == false && addingGoal == false) {
-		    	
-		    	resetCat(currentX, currentY);
-				
-		    }
-		    
-		    if (addingBlackHole == true) {
-		    	
-		    	blackHole b = new blackHole(event.getX(), event.getY(), 5, 10);      // write black hole position
-		    	gravityField.addBlackHole(b);
-		    	
-		    	addingBlackHole = false;
-		    
-		    	
-		    }
-		    
-		    if (addingGoal == true) {
-		    	
-		    	if(gol == null) {
-		    		
-		    		gol = new goal(event.getX(), event.getY(), 10);
-		    	}
-		    	else {
-		    		gol.setPosition(event.getX(), event.getY());		    		 // write goal position
-		    	}
-		    	
-		    	addingGoal = false;
-
-		    	
-		    	
-		    	
-		    }
-		    
-	
 			
 		
 		}
@@ -159,33 +120,20 @@ public class Board extends JPanel
 		
 		public void mouseReleased(MouseEvent event) {
 			
-			
 			if(cat1.getStationary() == true) {
 				cat1.setVelocity( 0.1 * (presX - dragX), 0.1 * (presY - dragY) );
 			}
-			
+
 			presX = 0;
 			presY = 0;
 			dragX = 0;
 			dragY = 0;
 			
-			//repaint();
-			
-
-			
-			
-			
-			
-			if(addingBlackHole == false && addingGoal == false && drag == true) {    //potential source of error
+			if(drag == true) {
 				cat1.setStationary(false);
-				drag = false;
+			    drag = false;
 			}
 
-			
-			
-			
-
-	
 		}
 		
 		public void mouseEntered(MouseEvent event) {
@@ -201,13 +149,7 @@ public class Board extends JPanel
 			if(drag == true) {
 				dragX = event.getX();
 				dragY = event.getY();
-				/*
-				x = event.getX();
-				y = event.getY();*/
-				
 				cat1.setPosition(event.getX(), event.getY());
-				
-				//repaint();
 			}
 			
 
@@ -218,21 +160,6 @@ public class Board extends JPanel
 		
 		public void mouseMoved(MouseEvent event) {
 			
-			if(addingBlackHole == true) {
-				
-				blackHoleX = event.getX();
-				blackHoleY = event.getY();
-			
-				//repaint();				
-				
-			}
-			
-			if(addingGoal == true) {
-				
-				goalX = event.getX();
-			    goalY = event.getY();
-				
-			}
 
 		}
 		
@@ -243,11 +170,10 @@ public class Board extends JPanel
 	private void setProps() {
 		
 
-		try (FileReader reader = new FileReader("src/resources/levelParameters/levelTest.txt");
+		try (FileReader reader = new FileReader(dir);
 				BufferedReader br = new BufferedReader(reader)){
 			readPropData(br);
 			initProps();
-			//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
 		}
 		catch(IOException e) {
     		e.printStackTrace();
@@ -475,42 +401,10 @@ public class Board extends JPanel
 		displayPanel.add(label);
     }
     
-    private void setInputPanel() {
-    	
-		inputPanel = new JPanel();
-		inputPanel.setPreferredSize(new Dimension(width, 20));
-		inputPanel.setLayout(null);
-		addBlackHole = new JButton();
-		addBlackHole.setBounds(0, 0, 20, 20);
-		addBlackHole.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				addingBlackHole = true;
-				
-			}
-			
-		});
-		
-		addGoal = new JButton();
-		addGoal.setBounds(20, 0, 20, 20);
-		addGoal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				addingGoal = true;
-				
-			}
-			
-		});
-
-		inputPanel.add(addBlackHole);
-		inputPanel.add(addGoal);    	
-    	
-    }
     
     private void addElements() {
     	
 	    this.add(displayPanel, BorderLayout.NORTH);
-	    this.add(inputPanel, BorderLayout.SOUTH);
     }
     
     private void setEventHandlers() {
@@ -622,12 +516,6 @@ public class Board extends JPanel
             g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
         	
         }
-
-        if(addingBlackHole == true) {
-        	
-        	g2d.drawOval(blackHoleX, blackHoleY, 10, 10);
-        	
-        }
         
     }
  
@@ -637,11 +525,6 @@ public class Board extends JPanel
         	g2d.drawRect( gol.getX_Coord(), gol.getY_Coord(), 10, 10);        	
         }
         
-        if(addingGoal == true) {
-        	
-        	g2d.drawRect(goalX, goalY, 10, 10);
-        	
-        }
     	
     }
     

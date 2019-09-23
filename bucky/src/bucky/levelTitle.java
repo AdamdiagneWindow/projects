@@ -70,7 +70,7 @@ public class levelTitle extends JPanel
 		if (counter == 120) {
 			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
 			f1.getLevelTitle().setVisible(false);
-			f1.getBoard().setVisible(true);
+			f1.getLevel().setVisible(true);
 			
 		}
 		

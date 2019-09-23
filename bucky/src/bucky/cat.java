@@ -8,9 +8,9 @@ import javax.swing.ImageIcon;
 
 public class cat extends projectileNew {
 	
-	private String flyingSpritesDir = "src/resources/catFlying.png", pulledSpritesDir = "src/resources/catPulledExp.png";
+	private String flyingSpritesDir = "src/resources/catFlying.png", pulledSpritesDir = "src/resources/catPulled0.png";
 	private List<Image>  pulledSprites, flyingSprites;
-	private int rotationFrames = 9, pulledWidth, pulledHeight;
+	private int rotationFrames = 9;
 	
 	public cat (int x, int y, double vx, double vy, double ax, double ay, int delay) {
 		
@@ -32,8 +32,6 @@ public class cat extends projectileNew {
  
 		addRotationSprites(rotationFrames, pulledSprites, pulledSpritesDir );
 		addRotationSprites(rotationFrames, flyingSprites, flyingSpritesDir);
-		setPulledDimensions(pulledSpritesDir);
-		
 		addSprite("src/resources/catBubble.png");
 		addSprite("src/resources/catBubble1.png");
 		addSprite("src/resources/catBubble2.png");
@@ -59,23 +57,6 @@ public class cat extends projectileNew {
 		
 	}
 	
-	public void setPulledDimensions(String directory) {
-		
-		Image im;
-		ImageIcon icon = new ImageIcon(directory);
-		im = icon.getImage();
-		pulledWidth = im.getWidth(null);
-		pulledHeight = im.getHeight(null);
-		
-	}
-	
-	public int getPulledWidth() {
-		return pulledWidth;
-	}
-	
-	public int getPulledHeight() {
-		return pulledHeight;
-	}
 	
 	
 	public Image getFlyingSprite() {
@@ -89,6 +70,9 @@ public class cat extends projectileNew {
 		
 		int angleIndex = (int)(Math.round(angle/40));
 		if(angleIndex == rotationFrames) {
+			angleIndex = 0;
+		}
+		if(angleIndex < 0) {
 			angleIndex = 0;
 		}
 		return pulledSprites.get(angleIndex);
