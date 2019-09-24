@@ -20,6 +20,7 @@ public class Donut2 extends JFrame {
 	Board board;
 	level lev;
 	levelTitle levTitle;
+	title titlePanel;
 	
     public Donut2() {
 
@@ -30,7 +31,7 @@ public class Donut2 extends JFrame {
     	
     	
     	gamePanel = new JPanel(new CardLayout());
-        final CardLayout cl = (CardLayout)(gamePanel.getLayout());  
+       // final CardLayout cl = (CardLayout)(gamePanel.getLayout());  
         
         /*
     	JPanel titlePanel = new JPanel();
@@ -48,20 +49,21 @@ public class Donut2 extends JFrame {
     	*/
     		
         
-       title titlePanel = new title(cl, gamePanel, LEVELTITLE);
+       titlePanel = new title(/*cl, gamePanel, LEVELTITLE*/);
         
        /*
     	board = new Board();*/
-       lev = new level("src/resources/levelParameters/levelTest.txt");
+       lev = new level(1);
        
-    	levTitle = new levelTitle();
+    	levTitle = new levelTitle(1);
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
     	gamePanel.add(lev, GAMEPANEL);
     	gamePanel.add(levTitle, LEVELTITLE);
     	
        
-        cl.show(gamePanel, TITLEPANEL);   	
+        //cl.show(gamePanel, TITLEPANEL);
+    	titlePanel.setVisible(true);
         
         
         
@@ -78,9 +80,27 @@ public class Donut2 extends JFrame {
         
     }    
     
+    public void addLevel(int level, cat caT) {
+    	lev = null;
+    	lev = new level(level, caT);
+    	gamePanel.add(lev, GAMEPANEL);
+    	System.out.println("im called");
+    }
+    
+    public void addLevelTitle(int level) {
+    	levTitle = new levelTitle(level);
+    	gamePanel.add(levTitle, LEVELTITLE);    	
+    	
+    }
+    
+    
     public String getString() {
     	return test;
     }
+    
+   public title getTitlePanel() {
+	   return titlePanel;
+   }
     
     public Board getBoard() {
     	return board; 

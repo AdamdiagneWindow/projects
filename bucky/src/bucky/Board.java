@@ -198,7 +198,7 @@ public class Board extends JPanel
 		
 		public void mouseDragged(MouseEvent event) {
 			
-			if(drag == true) {
+			if(drag == true && cat1.getStationary() == true) {
 				dragX = event.getX();
 				dragY = event.getY();
 				/*
@@ -256,14 +256,16 @@ public class Board extends JPanel
 		
 	}
 	
-	
+	public void startTimer() {
+		animator.start();
+	}
+		
 	
 	@Override
 	public void addNotify() {
 		super.addNotify();
 		
 		animator = new Thread(this);
-		animator.start();
 		
 	}
 	
@@ -597,8 +599,6 @@ public class Board extends JPanel
     	}
     	
     	if(flipCat == true) {
-    		
-    		System.out.println("flipped");
     		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null)/2, cat1.getY_Coord() - image.getHeight(null)/2, -image.getWidth(null), image.getHeight(null), this);
     	}
     	else {
@@ -634,7 +634,8 @@ public class Board extends JPanel
     private void drawGoal(Image image, Graphics2D g2d) {
     	
         if(gol != null) {
-        	g2d.drawRect( gol.getX_Coord(), gol.getY_Coord(), 10, 10);        	
+        	image = gol.getNextSprite();
+        	g2d.drawImage(image, gol.getX_Coord(), gol.getY_Coord(), this);        	
         }
         
         if(addingGoal == true) {
@@ -654,6 +655,11 @@ public class Board extends JPanel
         }
         
         g.drawLine(presX, presY, dragX, dragY);    	
+    }
+    
+    public Thread getAnimator() {
+    	
+    	return animator;
     }
     
 }

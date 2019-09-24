@@ -17,30 +17,31 @@ public class levelTitle extends JPanel
 	private int width = 800;
 	private int height = 800;
 	private int counter = 0;
+	private boolean breakLoop = false;
 	
 	private Thread timer;
 	
 	
-	public levelTitle() {
+	public levelTitle(int level) {
 		
-		initLevelTitle();
+		initLevelTitle(level);
 		
 	}
 	
-	private void initLevelTitle() {
+	private void initLevelTitle(int level) {
 		
 		setPreferredSize(new Dimension(width, height));
 		setBackground(Color.BLACK);
 		this.setLayout(null);
 		
-		setTitle();
+		setTitle(level);
  
 	}
 	
-	private void setTitle() {
+	private void setTitle(int level) {
 		
 		Image titleIm;
-    	ImageIcon titleIcon = new ImageIcon("src/resources/level1.png");
+    	ImageIcon titleIcon = new ImageIcon("src/resources/level" + Integer.toString(level) + ".png");
     	title = new JLabel(titleIcon);
     	titleIm = titleIcon.getImage();
     	title.setBounds(width/2 - 50, height/2, titleIm.getWidth(null), titleIm.getHeight(null));
@@ -67,10 +68,18 @@ public class levelTitle extends JPanel
 		
 		counter++;
 				
-		if (counter == 120) {
+		if (counter == 40) {
+			System.out.println("iniii");
+			breakLoop = true;
 			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
-			f1.getLevelTitle().setVisible(false);
+			this.setVisible(false);
+			f1.getTitlePanel().setVisible(false);
+			//System.out.println("flicker");
 			f1.getLevel().setVisible(true);
+			if(f1.getLevel().getAnimator().isAlive() == false) {
+				f1.getLevel().startTimer();
+			}
+			
 			
 		}
 		
@@ -86,6 +95,10 @@ public class levelTitle extends JPanel
     	
     	while (true) {
     		
+       		if(breakLoop == true) {
+       			System.out.println("broke");
+    			break;
+    		}
     		cycle();
     		repaint();
     		
@@ -109,7 +122,7 @@ public class levelTitle extends JPanel
     		
     		beforeTime = System.currentTimeMillis();
     		
-    		
+
     		
     	}
     	

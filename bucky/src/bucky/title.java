@@ -15,23 +15,23 @@ public class title extends JPanel{
 	private int width = 800;
 	private int height = 800;
 	
-	public title(final CardLayout cl, final Container pane, final String nextPanelName) {
+	public title(/*final CardLayout cl, final Container pane, final String nextPanelName*/) {
 		
-		initTitle(cl, pane, nextPanelName);
+		initTitle(/*cl, pane, nextPanelName*/);
 	}
 	
-	private void initTitle(final CardLayout cl, final Container pane, final String nextPanelName) {
+	private void initTitle(/*final CardLayout cl, final Container pane, final String nextPanelName*/) {
 		
 		setPreferredSize(new Dimension(width, height));
 		setBackground(Color.BLACK);
 		this.setLayout(null);
 		
-		setStart(cl, pane, nextPanelName);
+		setStart(/*cl, pane, nextPanelName*/);
 		setTitle();
  
 	}
 	
-	private void setStart(final CardLayout cl, final Container pane, final String nextPanelName) {
+	private void setStart(/*final CardLayout cl, final Container pane, final String nextPanelName*/) {
 		
 		Image startIm;
 		ImageIcon startIcon = new ImageIcon("src/resources/start.png");
@@ -46,8 +46,9 @@ public class title extends JPanel{
     	start.addActionListener(new ActionListener(){
     		public void actionPerformed(ActionEvent e) {
     			
-    			cl.show(pane, nextPanelName);
-    			startTimer();
+    			//cl.show(pane, nextPanelName);
+    			
+    			setNextPanel();
     			
     		}
     	});
@@ -68,9 +69,14 @@ public class title extends JPanel{
 		
 	}
 	
-	private void startTimer() {
+	private void setNextPanel() {
 		Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
+		f1.getTitlePanel().setVisible(false);
+		f1.getLevelTitle().setVisible(true);
 		f1.getLevelTitle().startTimer();
 	}
+	
+
+	
 	
 }

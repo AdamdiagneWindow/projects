@@ -47,6 +47,9 @@ public class level extends JPanel
 	private boolean drag = false, flipCat = false;
 	private boolean addingBlackHole = false;
 	private boolean addingGoal = false;
+	private boolean exit = false;
+	private boolean levelFinished;
+	
 	
     private JLabel label;
     
@@ -58,20 +61,28 @@ public class level extends JPanel
     
 	
 	private gravitationalField gravityField;
-	private cat cat1;
+	private cat cat1, catCont;
 	private List<star> starList;
 	private goal gol;
-	private String dir;
+	private int lev;
 	
-	public level(String directory) {
-		
-		initLevel(directory);
+	public level(int level) {
+		initLevel(level);
 	}
 	
-	private void initLevel(String directory) {
-		
-		dir = directory;
+	public level(int level, cat caT) {
+		catCont = caT;
+		initLevel(level);
+	}
 	
+	
+	private void initLevel(int level) {
+		
+		System.out.println("init");
+		System.out.println(catInitX);
+	    lev = level;
+	    levelFinished = false;
+	    exit = false;
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
 		blackInitX = new ArrayList<Integer>();
@@ -146,7 +157,7 @@ public class level extends JPanel
 		
 		public void mouseDragged(MouseEvent event) {
 			
-			if(drag == true) {
+			if(drag == true && cat1.getStationary() == true) {
 				dragX = event.getX();
 				dragY = event.getY();
 				cat1.setPosition(event.getX(), event.getY());
@@ -168,8 +179,8 @@ public class level extends JPanel
 	
 	
 	private void setProps() {
-		
-
+		System.out.println("setting props");
+		String dir = "src/resources/levelParameters/level" + lev + ".txt";
 		try (FileReader reader = new FileReader(dir);
 				BufferedReader br = new BufferedReader(reader)){
 			readPropData(br);
@@ -182,6 +193,9 @@ public class level extends JPanel
 		
 	}
 	
+	public void startTimer() {
+		animator.start();
+	}
 	
 	
 	@Override
@@ -189,7 +203,7 @@ public class level extends JPanel
 		super.addNotify();
 		
 		animator = new Thread(this);
-		animator.start();
+	
 		
 	}
 	
@@ -234,6 +248,8 @@ public class level extends JPanel
     
     private void cycle() {
     	
+        
+    	
     	int x = cat1.getX_Coord();
     	int y = cat1.getY_Coord();
     	
@@ -256,8 +272,11 @@ public class level extends JPanel
     	if(gol != null && cat1.getX_Coord() < gol.getX_Coord() + 20 && cat1.getX_Coord() > gol.getX_Coord() - 20 
     			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
     		
-			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
-			
+    		
+    		if(levelFinished == false) {
+    			resetCat(cat1.getX_Coord(), cat1.getY_Coord());
+    			endLevel();
+    		}
 			//System.out.println(f1.getString());
     		//setVisible(false);
     		
@@ -266,11 +285,12 @@ public class level extends JPanel
     	
     	
     	if(x > width || x < 0 || y > height || y < 0) {
-    		
+    		System.out.println("out of bounds");
+    		System.out.println("x " + catInitX + "y " + catInitY);
     		resetCat(catInitX, catInitY);
-    	}
-    	
 
+    	}
+    
     	
     }
     
@@ -280,13 +300,21 @@ public class level extends JPanel
     @Override
     public void run() {
     	
+    	
     	long beforeTime, timeDiff, sleep;
     	
     	beforeTime = System.currentTimeMillis();
     	
-    	while (true) {
-    		
+    	while (exit != true) {
+    		/*
+    		if(breakLoop == true) {
+    			System.out.println("brokeOutOfLevel");
+    			break;
+
+    		}*/
+    		System.out.println("before change: " + catInitX);
     		cycle();
+    		
     		repaint();
     		
     		timeDiff = System.currentTimeMillis() - beforeTime;
@@ -299,7 +327,7 @@ public class level extends JPanel
     		
     		try {
     			Thread.sleep(sleep);
-    			
+    			System.out.println("after change: " + catInitX);
     		}catch(InterruptedException e) {
                 String msg = String.format("Thread interrupted: %s", e.getMessage());
                 
@@ -308,9 +336,7 @@ public class level extends JPanel
     		}
     		
     		beforeTime = System.currentTimeMillis();
-    		
-    		
-    		
+
     	}
     	
     	
@@ -345,20 +371,23 @@ public class level extends JPanel
     }
     
     private void readPropData(BufferedReader br) {
+    	
+
     	try {
     		String line;
     		while ((line = br.readLine()) != null) {
     			String[] parts = line.split(" ");
-   
+    			System.out.println("catInitBeforeSet " + catInitX);
     			catInitX = readStringAsInt(catInitX, parts[0]);
     			catInitY = readStringAsInt(catInitY, parts[1]);
+    			System.out.println("catInitSet");
     			addStringToIntList(starInitX, parts[2]);
     			addStringToIntList(starInitY, parts[3]);
     			addStringToIntList(blackInitX, parts[4]);
-    			addStringToIntList(blackInitY, parts[5]);   
+    			addStringToIntList(blackInitY, parts[5]);  
     			goalInitX = readStringAsInt(goalInitX, parts[6]);
     			goalInitY = readStringAsInt(goalInitY, parts[7]);
-
+    			
 
             
     		}	    		
@@ -370,7 +399,15 @@ public class level extends JPanel
     }
     
     private void initProps() {
-		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+    	if(catInitX != 0 && catInitY != 0 && lev == 1) {
+    		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+    	}
+    	
+    	if(catInitX != 0 && catInitY != 0 && lev > 1) {
+    		cat1 = catCont;
+    		cat1.setPosition(catInitX, catInitY);
+    	}
+		
 		
 		for(int i = 0; i < starInitX.size(); i++) {
 			
@@ -385,7 +422,10 @@ public class level extends JPanel
 	    	gravityField.addBlackHole(b);
 			
 		}
-		gol = new goal(goalInitX, goalInitY, 10);
+		if(goalInitX != 0 && goalInitY != 0) {
+			gol = new goal(goalInitX, goalInitY, 10);	
+		}
+
 		//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
     }
     
@@ -478,8 +518,6 @@ public class level extends JPanel
     		 
     		calculateDragAngle();
     		image = cat1.getPulledSprite(angle);
-    		label.setText("angle" + angle);
-    		
     		
     	}
     	
@@ -491,8 +529,6 @@ public class level extends JPanel
     	}
     	
     	if(flipCat == true) {
-    		
-    		System.out.println("flipped");
     		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null)/2, cat1.getY_Coord() - image.getHeight(null)/2, -image.getWidth(null), image.getHeight(null), this);
     	}
     	else {
@@ -522,7 +558,8 @@ public class level extends JPanel
     private void drawGoal(Image image, Graphics2D g2d) {
     	
         if(gol != null) {
-        	g2d.drawRect( gol.getX_Coord(), gol.getY_Coord(), 10, 10);        	
+        	image = gol.getNextSprite();
+        	g2d.drawImage(image, gol.getX_Coord(), gol.getY_Coord(), this);        	
         }
         
     	
@@ -537,6 +574,26 @@ public class level extends JPanel
         }
         
         g.drawLine(presX, presY, dragX, dragY);    	
+    }
+    
+    public Thread getAnimator() {
+    	
+    	return animator;
+    }
+    
+    private void endLevel() {
+    	levelFinished = true;
+    	exit = true;
+        System.out.println("I should be called only once");
+		Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
+		f1.addLevel(lev + 1, cat1);
+		f1.addLevelTitle(lev + 1);
+		exit = true;
+		this.setVisible(false);
+		f1.getLevelTitle().setVisible(true);
+		f1.getLevelTitle().startTimer();
+		System.out.println(lev);
+	
     }
     
 }
