@@ -1,8 +1,2 @@
-cat
-100 300
-star
-100 100
-blackHole
-200 200
-goal
-100 400
+200 200 300 300 all all 500 500
+all all all all all all all all

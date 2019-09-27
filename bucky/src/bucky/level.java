@@ -4,6 +4,7 @@ package bucky;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -21,9 +22,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.FileReader;
-
+import java.awt.GraphicsEnvironment;
 
 
 
@@ -50,12 +49,11 @@ public class level extends JPanel
 	private boolean exit = false;
 	private boolean levelFinished;
 	
+	private Font pixelFont;
 	
     private JLabel label;
-    
     private JPanel displayPanel;
     private JPanel inputPanel;
-    
     private JButton addBlackHole;
     private JButton addGoal;
     
@@ -273,10 +271,11 @@ public class level extends JPanel
     			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
     		
     		
-    		if(levelFinished == false) {
+    		//if(levelFinished == false) {
     			resetCat(cat1.getX_Coord(), cat1.getY_Coord());
     			endLevel();
-    		}
+    		//}
+    		
 			//System.out.println(f1.getString());
     		//setVisible(false);
     		
@@ -312,7 +311,7 @@ public class level extends JPanel
     			break;
 
     		}*/
-    		System.out.println("before change: " + catInitX);
+    		
     		cycle();
     		
     		repaint();
@@ -327,7 +326,7 @@ public class level extends JPanel
     		
     		try {
     			Thread.sleep(sleep);
-    			System.out.println("after change: " + catInitX);
+    			
     		}catch(InterruptedException e) {
                 String msg = String.format("Thread interrupted: %s", e.getMessage());
                 
@@ -434,9 +433,19 @@ public class level extends JPanel
 		displayPanel = new JPanel();
 		displayPanel.setPreferredSize(new Dimension(width, 20));
 		
+		try {
+			pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf"));
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf")));
+					
+		}
+		
+		catch (IOException | FontFormatException e){
+			
+		}
 
-		label = new JLabel(".................");
-		label.setFont(new Font("Tahoma", Font.BOLD, 10));
+		label = new JLabel("ExampleFont");
+		label.setFont(new Font("PixelMplus12", Font.BOLD, 10));
 		label.setBounds(10,10, 500, 20);  
 		displayPanel.add(label);
     }
@@ -582,7 +591,7 @@ public class level extends JPanel
     }
     
     private void endLevel() {
-    	levelFinished = true;
+    	//levelFinished = true;
     	exit = true;
         System.out.println("I should be called only once");
 		Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);

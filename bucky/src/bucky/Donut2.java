@@ -1,7 +1,7 @@
 package bucky;
 
 import java.io.IOException;
-import java.awt.EventQueue;
+
 import javax.swing.JFrame;
 
 import java.awt.*;
@@ -87,7 +87,7 @@ public class Donut2 extends JFrame {
     	System.out.println("im called");
     }
     
-    public void addLevelTitle(int level) {
+    public void addLevelTitle(int level){
     	levTitle = new levelTitle(level);
     	gamePanel.add(levTitle, LEVELTITLE);    	
     	

@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 
+import java.io.*; 
+
 
 public class levelTitle extends JPanel
 		implements Runnable{
@@ -14,6 +16,8 @@ public class levelTitle extends JPanel
 	
 	private JButton start;
 	private JLabel title;
+	private Font pixelFont;
+	
 	private int width = 800;
 	private int height = 800;
 	private int counter = 0;
@@ -28,7 +32,7 @@ public class levelTitle extends JPanel
 		
 	}
 	
-	private void initLevelTitle(int level) {
+	private void initLevelTitle (int level) {
 		
 		setPreferredSize(new Dimension(width, height));
 		setBackground(Color.BLACK);
@@ -39,14 +43,28 @@ public class levelTitle extends JPanel
 	}
 	
 	private void setTitle(int level) {
+
+		try {
+			pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf"));
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf")));
+					
+		}
 		
-		Image titleIm;
-    	ImageIcon titleIcon = new ImageIcon("src/resources/level" + Integer.toString(level) + ".png");
-    	title = new JLabel(titleIcon);
-    	titleIm = titleIcon.getImage();
-    	title.setBounds(width/2 - 50, height/2, titleIm.getWidth(null), titleIm.getHeight(null));
-    	
-    	this.add(title);		
+		catch (IOException | FontFormatException e){
+			
+		}
+				
+		    title = new JLabel("LEVEL " + Integer.toString(level));
+		    title.setFont(new Font("PixelMplus12", Font.BOLD, 25));
+		    title.setForeground(Color.white);
+
+		
+		title.setBounds(width/2 - 50, height/2 - 100, 100, 100);
+	
+		this.add(title);	
+		
+	
 	}
 	
 	public void startTimer() {
@@ -68,9 +86,9 @@ public class levelTitle extends JPanel
 		
 		counter++;
 				
-		if (counter == 40) {
+		if (counter == 120) {
 			System.out.println("iniii");
-			breakLoop = true;
+			//breakLoop = true;
 			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
 			this.setVisible(false);
 			f1.getTitlePanel().setVisible(false);
@@ -95,10 +113,10 @@ public class levelTitle extends JPanel
     	
     	while (true) {
     		
-       		if(breakLoop == true) {
+       		/*if(breakLoop == true) {
        			System.out.println("broke");
     			break;
-    		}
+    		}*/
     		cycle();
     		repaint();
     		
