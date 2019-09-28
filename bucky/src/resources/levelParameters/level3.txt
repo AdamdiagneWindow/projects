@@ -1,0 +1,16 @@
+200 200 all all 357 354 603 600 
+all all all all 328 379 all all 
+all all all all 333 364 all all 
+all all all all 383 400 all all 
+all all all all 338 336 all all 
+all all all all 416 370 all all 
+all all all all 404 337 all all 
+all all all all 358 417 all all 
+all all all all 393 320 all all 
+all all all all 309 372 all all 
+all all all all 314 419 all all 
+all all all all 381 388 all all 
+all all all all 462 314 all all 
+all all all all 504 273 all all 
+all all all all 271 458 all all 
+all all all all 236 478 all all 

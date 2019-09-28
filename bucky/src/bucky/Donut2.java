@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+
 public class Donut2 extends JFrame {
     
 	JPanel gamePanel;
@@ -84,7 +87,6 @@ public class Donut2 extends JFrame {
     	lev = null;
     	lev = new level(level, caT);
     	gamePanel.add(lev, GAMEPANEL);
-    	System.out.println("im called");
     }
     
     public void addLevelTitle(int level){
@@ -97,6 +99,8 @@ public class Donut2 extends JFrame {
     public String getString() {
     	return test;
     }
+    
+    
     
    public title getTitlePanel() {
 	   return titlePanel;
@@ -117,10 +121,10 @@ public class Donut2 extends JFrame {
     
     public static void main(String[] args) {
 
-        
-       
+
                 Donut2 ex = new Donut2();
                 ex.setVisible(true);
+                
     }
 }
 

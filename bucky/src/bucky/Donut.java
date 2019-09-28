@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 public class Donut extends JFrame {
+	
+	Board board;
     
     public Donut() {
 
@@ -12,13 +14,16 @@ public class Donut extends JFrame {
     }
 
     private void initUI() {
-
-        add(new Board());
+    	
+    	board = new Board();
+        add(board);
         setResizable(false);
         pack();
         
         setTitle("Basic shapes");
         setLocationRelativeTo(null);
+        
+        board.startTimer();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }    
     

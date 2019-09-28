@@ -59,6 +59,11 @@ public class gravitationalField {
 		}		
 	}
 	
+	public void clearBlackHoles() {
+		
+		blackHoleList.clear();
+	}
+	
 	
 	public void addBlackHole(blackHole bHole) {
 		

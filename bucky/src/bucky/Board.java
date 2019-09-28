@@ -21,8 +21,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 
 
@@ -41,6 +39,7 @@ public class Board extends JPanel
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
 	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
 	private List<Integer> starInitX, starInitY, blackInitX, blackInitY;
+	private String lev;
 	
 	private double angle, tanAngle;
 
@@ -53,8 +52,12 @@ public class Board extends JPanel
     private JPanel displayPanel;
     private JPanel inputPanel;
     
+
     private JButton addBlackHole;
     private JButton addGoal;
+    private JButton saveLevel;
+    private JButton clear;    
+    private JTextField inputLevel;
     
 	
 	private gravitationalField gravityField;
@@ -128,14 +131,10 @@ public class Board extends JPanel
 		    	
 		    	addingGoal = false;
 
-		    	
-		    	
-		    	
+
 		    }
 		    
-	
-			
-		
+
 		}
 		
 		
@@ -170,20 +169,11 @@ public class Board extends JPanel
 			dragY = 0;
 			
 			//repaint();
-			
-
-			
-			
-			
-			
+					
 			if(addingBlackHole == false && addingGoal == false && drag == true) {    //potential source of error
 				cat1.setStationary(false);
 				drag = false;
 			}
-
-			
-			
-			
 
 	
 		}
@@ -482,31 +472,12 @@ public class Board extends JPanel
 		inputPanel = new JPanel();
 		inputPanel.setPreferredSize(new Dimension(width, 20));
 		inputPanel.setLayout(null);
-		addBlackHole = new JButton();
-		addBlackHole.setBounds(0, 0, 20, 20);
-		addBlackHole.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				addingBlackHole = true;
-				
-			}
-			
-		});
+		setAddBlackHoleButton();
+		setAddGoalButton();
+		setSaveLevelButton();
+		setClearButton();
+		setInputLevelField();
 		
-		addGoal = new JButton();
-		addGoal.setBounds(20, 0, 20, 20);
-		addGoal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				addingGoal = true;
-				
-			}
-			
-		});
-
-		inputPanel.add(addBlackHole);
-		inputPanel.add(addGoal);    	
-    	
     }
     
     private void addElements() {
@@ -655,6 +626,142 @@ public class Board extends JPanel
         }
         
         g.drawLine(presX, presY, dragX, dragY);    	
+    }
+    
+    private void clearLevel() {
+    	starList.clear();
+    	gravityField.clearBlackHoles();
+    
+    }
+    
+    private void setAddBlackHoleButton(){
+		addBlackHole = new JButton();
+		addBlackHole.setBounds(0, 0, 20, 20);
+		addBlackHole.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addingBlackHole = true;
+				
+			}
+			
+		}); 
+		inputPanel.add(addBlackHole);
+    }
+    
+    private void setAddGoalButton() {
+		addGoal = new JButton();
+		addGoal.setBounds(20, 0, 20, 20);
+		addGoal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addingGoal = true;
+				
+			}
+			
+		}); 
+		inputPanel.add(addGoal);
+    	
+    }
+    
+    private void setSaveLevelButton() {
+		saveLevel = new JButton();
+		saveLevel.setBounds(780, 0, 20, 20);
+		saveLevel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+                try {
+                	FileWriter fw = new FileWriter("src/resources/levelParameters/level" + lev + ".txt");
+                	BufferedWriter writeFileBuffer = new BufferedWriter(fw);
+                	
+                	List <blackHole> blackHoleList = gravityField.getBlackHoleList();
+                	int maxListSize = starList.size();
+                	if(blackHoleList.size() > maxListSize) {
+                		maxListSize = blackHoleList.size();
+                	}
+                	if(maxListSize == 0) {
+                		maxListSize = 1;
+                	}
+                	System.out.println(maxListSize);
+                	
+                	for(int i = 0; i < maxListSize; i++) {
+                		
+                		if(i == 0) {
+                			writeFileBuffer.write(cat1.getX_Coord() + " ");
+                		    writeFileBuffer.write(cat1.getY_Coord() + " ");		
+                		}
+                		else {
+                			writeFileBuffer.write("all " + "all ");
+                		}
+                		
+                		if(starList.size() > i) {
+                			writeFileBuffer.write(starList.get(i).getX_Coord() + " ");
+                			writeFileBuffer.write(starList.get(i).getY_Coord() + " ");
+                		}
+                		else {
+                			writeFileBuffer.write("all " + "all ");
+                		}
+                		
+                		if(blackHoleList.size() > i) {
+                			writeFileBuffer.write(blackHoleList.get(i).getX_Coord() + " ");
+                			writeFileBuffer.write(blackHoleList.get(i).getY_Coord() + " ");
+                		}
+                		else {
+                			writeFileBuffer.write("all " + "all ");
+                		}
+
+
+                		if(i == 0) {
+                			writeFileBuffer.write(gol.getX_Coord() + " ");
+                			writeFileBuffer.write(gol.getY_Coord() + " ");		
+                		}
+                		else {
+                			writeFileBuffer.write("all " + "all ");
+                		}
+                		writeFileBuffer.newLine();
+	
+                	}
+                	
+                	writeFileBuffer.close();
+                	
+                }
+                
+                catch (IOException io){
+                	io.printStackTrace();
+                }						
+                System.out.println("Level Saved");
+			}		
+		});  
+		inputPanel.add(saveLevel);
+    }
+    
+    private void setClearButton() {
+		clear = new JButton();
+		clear.setBounds(760, 0, 20, 20);
+		clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				clearLevel();
+	               System.out.println("Level Reset");
+			}
+		
+			
+			
+		});	
+		inputPanel.add(clear);
+    }
+    
+    private void setInputLevelField() {
+		inputLevel = new JTextField();
+		inputLevel.setBounds(40, 0, 20,20);
+		inputLevel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				lev = inputLevel.getText();
+				System.out.println("level: " + lev);
+			}
+
+		});
+		inputPanel.add(inputLevel);
     }
     
     public Thread getAnimator() {
