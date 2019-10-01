@@ -10,7 +10,7 @@ public class gravitationalField {
 	
 	private acc_Vector [][] potentialMatrix;  //= new accelerationVector[10000][10000];
 	private double [][] fieldOccupancy; //= new double [10000][10000];
-	private List<blackHole> blackHoleList;
+	private List<prop> blackHoleList;
 	private int width, height;
 	
 	
@@ -32,7 +32,7 @@ public class gravitationalField {
 		
 		
 		fieldOccupancy = new double[width][height];
-		blackHoleList = new ArrayList<blackHole>();
+		blackHoleList = new ArrayList<prop>();
 		
 	
 	}
@@ -99,7 +99,7 @@ public class gravitationalField {
 				
 	}
 	
-	public List<blackHole> getBlackHoleList(){
+	public List<prop> getBlackHoleList(){
 		
 		return blackHoleList;
 		

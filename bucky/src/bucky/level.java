@@ -272,8 +272,8 @@ public class level extends JPanel
     			endLevel();   		
     	}
     	
-        for (blackHole b : gravityField.getBlackHoleList()) {
-        	Rectangle r2 = new Rectangle(b.getX_Coord() - b.getWidth()/4, b.getY_Coord() - b.getHeight()/4, 20, 20);
+        for (prop p : gravityField.getBlackHoleList()) {
+        	Rectangle r2 = new Rectangle(p.getX_Coord() - p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
         	if(drag == false && r.intersects(r2)) {
         		cat1.reset(catInitX, catInitY);
         		System.out.println("sucked");
@@ -544,10 +544,10 @@ public class level extends JPanel
     }
     
     private void drawBlackHole(Image image, Graphics2D g2d) {
-        for (blackHole b : gravityField.getBlackHoleList()) {
+        for (prop p : gravityField.getBlackHoleList()) {
         	
-        	image = b.getNextSprite();
-            g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
+        	image = p.getNextSprite();
+            g2d.drawImage(image, p.getX_Coord(), p.getY_Coord(), this);
         	//g2d.drawRect(b.getX_Coord() + b.getWidth()/4, b.getY_Coord() + b.getHeight()/4, 20, 20);
            //g2d.drawRect((int)rec.getX(), (int)rec.getY(), 20, 20);
         }
