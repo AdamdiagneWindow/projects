@@ -86,7 +86,7 @@ public class levelTitle extends JPanel
 		
 		counter++;
 				
-		if (counter == 120) {
+		if (counter == 10) {
 			System.out.println("iniii");
 			//breakLoop = true;
 			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);

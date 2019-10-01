@@ -1,2 +1,1 @@
-200 200 100 100 300 300 400 400
-all all all all all all all all
+146 531 all all 363 429 602 318 

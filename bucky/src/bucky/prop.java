@@ -5,11 +5,12 @@ import javax.swing.ImageIcon;
 import java.util.List;
 import java.util.ArrayList;
 
+import java.awt.Rectangle;
 
 
 public class prop {
 
-	protected int x_Coord, y_Coord, width, height, imageIndex = 0, count = 0, frameDelay;
+	protected int x_Coord, y_Coord, width, height, imageIndex = 0, count = 0, frameDelay, frameDelayInit;
 	protected List<Image> sprites;
 	
 	public prop() {
@@ -22,7 +23,9 @@ public class prop {
 		
 		x_Coord = x;
 		y_Coord = y;
+		
 		frameDelay = delay;
+		frameDelayInit = delay;
 		
 	}
 	
@@ -68,14 +71,15 @@ public class prop {
 		
 	}
 	
-	public void resetPropAnimation(int delay) {
+	public void resetPropAnimation() {
 		
 		imageIndex = 0;
 		count = 0;
-		frameDelay = delay;
+		frameDelay = frameDelayInit;
 		
 		
 	}
+	
 	
 	public int getWidth() {
 		
@@ -86,6 +90,11 @@ public class prop {
 	public int getHeight() {
 		
 		return height;
+		
+	}
+	
+	public Rectangle getBounds() {
+		return new Rectangle(x_Coord, y_Coord, width, height);
 		
 	}
 	

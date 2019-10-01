@@ -28,6 +28,7 @@ public class cat extends projectileNew {
 		y_Acc = ay;
 		
 		frameDelay = delay;
+		frameDelayInit = delay;
 		
  
 		addRotationSprites(rotationFrames, pulledSprites, pulledSpritesDir );

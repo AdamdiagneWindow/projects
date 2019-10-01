@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Image;
 import javax.swing.JLabel;
@@ -35,8 +36,9 @@ public class Board extends JPanel
 	private final int delay = 25;
 	private Thread animator;
 	
-
-	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
+	private int time;
+	private int time2;
+	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY, satX, satY, pres2X, pres2Y, drag2X, drag2Y;
 	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
 	private List<Integer> starInitX, starInitY, blackInitX, blackInitY;
 	private String lev;
@@ -44,8 +46,7 @@ public class Board extends JPanel
 	private double angle, tanAngle;
 
 	private boolean drag = false, flipCat = false;
-	private boolean addingBlackHole = false;
-	private boolean addingGoal = false;
+	private boolean addingBlackHole = false, addingGoal = false, addingSatellite = false, settingSatVel = false;
 	
     private JLabel label;
     
@@ -53,18 +54,16 @@ public class Board extends JPanel
     private JPanel inputPanel;
     
 
-    private JButton addBlackHole;
-    private JButton addGoal;
-    private JButton saveLevel;
-    private JButton clear;    
+    private JButton addBlackHole, addGoal, addSatellite, saveLevel, clear;    
     private JTextField inputLevel;
     
 	
 	private gravitationalField gravityField;
 	private cat cat1;
 	private List<star> starList;
+	private List<satellite> satelliteList;
 	private goal gol;
-	
+
 	
 	public Board() {
 		
@@ -79,6 +78,7 @@ public class Board extends JPanel
 		blackInitY = new ArrayList<Integer>();
 		
 		starList = new ArrayList<star>();
+		satelliteList = new ArrayList<satellite>();
 		gravityField = new gravitationalField(width, height);		
 		
 		setProps();	   //Read props data from level file and initializes props
@@ -103,9 +103,9 @@ public class Board extends JPanel
 			label.setText("x = " + currentX + "     y = " + currentY);								
 			
 		    
-		    if(addingBlackHole == false && addingGoal == false) {
+		    if(addingBlackHole == false && addingGoal == false && addingSatellite == false && settingSatVel == false) {
 		    	
-		    	resetCat(currentX, currentY);
+		    	cat1.reset(currentX, currentY);
 				
 		    }
 		    
@@ -130,9 +130,28 @@ public class Board extends JPanel
 		    	}
 		    	
 		    	addingGoal = false;
-
-
 		    }
+		    
+		    if (addingSatellite == true) {
+		    	time2 = time;
+		    	settingSatVel = true;
+		    	pres2X = event.getX();
+		    	pres2Y = event.getY();
+		    	addingSatellite = false;
+		    }
+		    
+		    else if (settingSatVel == true && time - time2 > 10) {
+		    	satellite s = new satellite(pres2X, pres2Y, 0.1*(drag2X - pres2X), 0.1*(drag2Y - pres2Y),3, 10);
+		    	satelliteList.add(s);
+		    	settingSatVel = false;
+		    	pres2X = 0;
+		    	pres2Y = 0;
+		    	drag2X = 0;
+		    	drag2Y = 0;
+		    	
+		    	System.out.println("resetSatDrag");
+		    }
+		    
 		    
 
 		}
@@ -142,18 +161,15 @@ public class Board extends JPanel
 		
 		public void mousePressed(MouseEvent event) {
 			
-			int x = cat1.getX_Coord();
-			int y = cat1.getY_Coord();
-			int w = cat1.getWidth();
-			int h = cat1.getHeight();
-			
-			
 			presX = event.getX();
 			presY = event.getY();
 			
-			if (presX >= x - w && presX <= x + w && presY >= y - h && presY <= y + h) {
+			Rectangle r = cat1.getBounds();
+			if(r.contains(presX, presY)) {
 				drag = true;
 			}
+			
+
 		}
 		
 		public void mouseReleased(MouseEvent event) {
@@ -207,6 +223,32 @@ public class Board extends JPanel
 		}
 		
 		public void mouseMoved(MouseEvent event) {
+			
+			if(addingSatellite == true) {
+				if(event.getX() < 20) {
+					satX = 20;
+					satY = event.getY();
+				}
+				else if(event.getX() > width - 20) {
+					satX = width - 20;
+					satY = event.getY();
+				}
+				else if(event.getY() < 40) {
+					satX = event.getX();
+					satY = 40;
+				}
+				else if(event.getY() > height - 40) {
+					satX = event.getX();
+					satY = height - 40;
+				}
+				
+			}
+			
+			if(settingSatVel == true) {
+				drag2X = event.getX();
+				drag2Y = event.getY();
+			}
+
 			
 			if(addingBlackHole == true) {
 				
@@ -286,7 +328,9 @@ public class Board extends JPanel
         drawStar(image, g2d);
         drawBlackHole(image, g2d);
         drawGoal(image, g2d);
+        drawSatellite(g2d);
         drawLine(g);
+        drawLine2(g);
         
     }
     
@@ -303,9 +347,10 @@ public class Board extends JPanel
     	int x = cat1.getX_Coord();
     	int y = cat1.getY_Coord();
     	
+    	
     	double ax = 0;
     	double ay = 0;
-    	if(x < width && y < height && x > 0 && y > 0) {
+    	if(gravityField != null && x < width && y < height && x > 0 && y > 0) {
     		ax = gravityField.getAcc_Vector(x,y).getAcc_H();
     		ay = gravityField.getAcc_Vector(x,y).getAcc_V();  		
     	}
@@ -319,22 +364,59 @@ public class Board extends JPanel
     		
     	}
     	
-    	if(gol != null && cat1.getX_Coord() < gol.getX_Coord() + 20 && cat1.getX_Coord() > gol.getX_Coord() - 20 
-    			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
-    		
-			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
-			
-			//System.out.println(f1.getString());
-    		//setVisible(false);
-    		
-			
+    	
+    	
+    	
+    	Rectangle r = cat1.getBounds(); 
+    	if(drag == false && r.contains(gol.getX_Coord(), gol.getY_Coord()) ) {
+     			cat1.reset(cat1.getX_Coord(), cat1.getY_Coord());
+    			   		
     	}
     	
+        for (blackHole b : gravityField.getBlackHoleList()) {
+        	Rectangle r2 = new Rectangle(b.getX_Coord() - b.getWidth()/4, b.getY_Coord() - b.getHeight()/4, 20, 20);
+        	if(drag == false && r.intersects(r2)) {
+        		cat1.reset(catInitX, catInitY);
+        		System.out.println("sucked");
+        	}
+        	
+        }
+    	
+    	 
     	
     	if(x > width || x < 0 || y > height || y < 0) {
+    		System.out.println("out of bounds");
+    		cat1.reset(catInitX, catInitY);
+
+    	} 
+    	
+    	for(satellite s: satelliteList) {
+    		x = s.getX_Coord();
+    		y = s.getY_Coord();
     		
-    		resetCat(catInitX, catInitY);
+        	if(x < width && y < height && x > 0 && y > 0) {
+        		ax = gravityField.getAcc_Vector(x,y).getAcc_H();
+        		ay = gravityField.getAcc_Vector(x,y).getAcc_V();  		
+        	}
+    		
+        	if (s.getStationary() == false) {
+        		s.setAcceleration(ax, ay);
+        		s.accelerate();
+        		s.move();
+        		
+        	}
+    		if(x > width || x < 0 || y > height || y < 0) {
+    			
+    			if(s.getTimer().isAlive() == false) {
+    				s.respawn();
+    			}
+    			
+    			
+    		}	
     	}
+
+    	
+    	
     	
 
     	
@@ -353,6 +435,7 @@ public class Board extends JPanel
     	while (true) {
     		
     		cycle();
+    		time++;
     		repaint();
     		
     		timeDiff = System.currentTimeMillis() - beforeTime;
@@ -374,7 +457,6 @@ public class Board extends JPanel
     		}
     		
     		beforeTime = System.currentTimeMillis();
-    		
     		
     		
     	}
@@ -474,6 +556,7 @@ public class Board extends JPanel
 		inputPanel.setLayout(null);
 		setAddBlackHoleButton();
 		setAddGoalButton();
+		setAddSatButton();
 		setSaveLevelButton();
 		setClearButton();
 		setInputLevelField();
@@ -502,15 +585,6 @@ public class Board extends JPanel
     }
     
     
-    private void resetCat(int x, int y) {
-    	cat1.setPosition(x, y);       // write cat position
-    	cat1.setVelocity(0, 0);
-	    cat1.setAcceleration(0, 0);
-	
-	    cat1.setStationary(true);
-	    cat1.resetPropAnimation(10);   	
-    	
-    }
     
     private void calculateDragAngle() {
     	
@@ -570,7 +644,7 @@ public class Board extends JPanel
     	}
     	
     	if(flipCat == true) {
-    		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null)/2, cat1.getY_Coord() - image.getHeight(null)/2, -image.getWidth(null), image.getHeight(null), this);
+    		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null), cat1.getY_Coord(), -image.getWidth(null), image.getHeight(null), this);
     	}
     	else {
     		g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
@@ -591,7 +665,8 @@ public class Board extends JPanel
         	
         	image = b.getNextSprite();
             g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
-        	
+            //g2d.drawRect(b.getX_Coord() + b.getWidth()/4, b.getY_Coord() + b.getHeight()/4, 20, 20);
+     
         }
 
         if(addingBlackHole == true) {
@@ -617,6 +692,22 @@ public class Board extends JPanel
     	
     }
     
+    private void drawSatellite(Graphics2D g2d) {
+    	
+    	for(satellite s : satelliteList) {
+    		g2d.drawOval(s.getX_Coord(), s.getY_Coord(), 10, 10);
+    	}
+    		
+
+    	
+        if(addingSatellite == true) {
+        	
+        	g2d.drawRect(satX, satY, 10, 10);
+        	
+        }    	
+    	
+    }
+    
     private void drawLine(Graphics g) {
     	
         if(dragX == 0 && dragY == 0) {
@@ -628,9 +719,21 @@ public class Board extends JPanel
         g.drawLine(presX, presY, dragX, dragY);    	
     }
     
+    private void drawLine2(Graphics g) {
+    	
+        if(drag2X == 0 && drag2Y == 0) {
+        	
+        	drag2X = pres2X;
+        	drag2Y = pres2Y;
+        }
+        
+        g.drawLine(pres2X, pres2Y, drag2X, drag2Y);    	
+    }
+    
     private void clearLevel() {
     	starList.clear();
     	gravityField.clearBlackHoles();
+    	gravityField.resetPotentialMatrix();
     
     }
     
@@ -663,9 +766,25 @@ public class Board extends JPanel
     	
     }
     
+    private void setAddSatButton() {
+		addSatellite = new JButton();
+		addSatellite.setBounds(40, 0, 20, 20);
+		addSatellite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				addingSatellite = true;
+				
+			}
+			
+		}); 
+		inputPanel.add(addSatellite);
+    	
+    }
+    
+    
     private void setSaveLevelButton() {
 		saveLevel = new JButton();
-		saveLevel.setBounds(780, 0, 20, 20);
+		saveLevel.setBounds(width - 20, 0, 20, 20);
 		saveLevel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -736,7 +855,7 @@ public class Board extends JPanel
     
     private void setClearButton() {
 		clear = new JButton();
-		clear.setBounds(760, 0, 20, 20);
+		clear.setBounds(width - 40, 0, 20, 20);
 		clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -752,7 +871,7 @@ public class Board extends JPanel
     
     private void setInputLevelField() {
 		inputLevel = new JTextField();
-		inputLevel.setBounds(40, 0, 20,20);
+		inputLevel.setBounds(60, 0, 20,20);
 		inputLevel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				

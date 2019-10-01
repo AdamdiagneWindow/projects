@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Image;
+import java.awt.Rectangle;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -63,6 +65,7 @@ public class level extends JPanel
 	private List<star> starList;
 	private goal gol;
 	private int lev;
+
 	
 	public level(int level) {
 		initLevel(level);
@@ -72,8 +75,7 @@ public class level extends JPanel
 		catCont = caT;
 		initLevel(level);
 	}
-	
-	
+
 	private void initLevel(int level) {
 		
 		System.out.println("init");
@@ -112,19 +114,14 @@ public class level extends JPanel
 
 		
 		public void mousePressed(MouseEvent event) {
-			
-			int x = cat1.getX_Coord();
-			int y = cat1.getY_Coord();
-			int w = cat1.getWidth();
-			int h = cat1.getHeight();
-			
-			
 			presX = event.getX();
 			presY = event.getY();
 			
-			if (presX >= x - w && presX <= x + w && presY >= y - h && presY <= y + h) {
+			Rectangle r = cat1.getBounds();
+			if(r.contains(presX, presY)) {
 				drag = true;
 			}
+			
 		}
 		
 		public void mouseReleased(MouseEvent event) {
@@ -267,32 +264,34 @@ public class level extends JPanel
     		
     	}
     	
-    	if(gol != null && cat1.getX_Coord() < gol.getX_Coord() + 20 && cat1.getX_Coord() > gol.getX_Coord() - 20 
-    			&& cat1.getY_Coord() < gol.getY_Coord() + 20 && cat1.getY_Coord() > gol.getY_Coord() - 20) {
-    		
-    		
-    		//if(levelFinished == false) {
-    			resetCat(cat1.getX_Coord(), cat1.getY_Coord());
-    			endLevel();
-    		//}
-    		
-			//System.out.println(f1.getString());
-    		//setVisible(false);
-    		
-			
+    	
+    	
+    	Rectangle r = cat1.getBounds(); 
+    	if(drag == false && r.contains(gol.getX_Coord(), gol.getY_Coord()) ) {
+     			cat1.reset(cat1.getX_Coord(), cat1.getY_Coord());
+    			endLevel();   		
     	}
     	
+        for (blackHole b : gravityField.getBlackHoleList()) {
+        	Rectangle r2 = new Rectangle(b.getX_Coord() - b.getWidth()/4, b.getY_Coord() - b.getHeight()/4, 20, 20);
+        	if(drag == false && r.intersects(r2)) {
+        		cat1.reset(catInitX, catInitY);
+        		System.out.println("sucked");
+        	}
+        	
+        }
+    	
+    	 
     	
     	if(x > width || x < 0 || y > height || y < 0) {
     		System.out.println("out of bounds");
     		System.out.println("x " + catInitX + "y " + catInitY);
-    		resetCat(catInitX, catInitY);
+    		cat1.reset(catInitX, catInitY);
 
     	}
     
     	
     }
-    
     
     
     
@@ -471,17 +470,6 @@ public class level extends JPanel
 		setLayout(new BorderLayout());
     }
     
-    
-    private void resetCat(int x, int y) {
-    	cat1.setPosition(x, y);       // write cat position
-    	cat1.setVelocity(0, 0);
-	    cat1.setAcceleration(0, 0);
-	
-	    cat1.setStationary(true);
-	    cat1.resetPropAnimation(10);   	
-    	
-    }
-    
     private void calculateDragAngle() {
     	
 		tanAngle = ((double)dragY - (double)presY)/((double)dragX - (double)presX);
@@ -538,11 +526,12 @@ public class level extends JPanel
     	}
     	
     	if(flipCat == true) {
-    		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null)/2, cat1.getY_Coord() - image.getHeight(null)/2, -image.getWidth(null), image.getHeight(null), this);
+    		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null), cat1.getY_Coord() /*- image.getHeight(null)/2*/, -image.getWidth(null), image.getHeight(null), this);
     	}
     	else {
     		g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
     	}
+    	
     	
     }
     
@@ -559,7 +548,8 @@ public class level extends JPanel
         	
         	image = b.getNextSprite();
             g2d.drawImage(image, b.getX_Coord(), b.getY_Coord(), this);
-        	
+        	//g2d.drawRect(b.getX_Coord() + b.getWidth()/4, b.getY_Coord() + b.getHeight()/4, 20, 20);
+           //g2d.drawRect((int)rec.getX(), (int)rec.getY(), 20, 20);
         }
         
     }

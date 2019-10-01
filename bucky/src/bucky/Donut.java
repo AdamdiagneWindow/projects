@@ -19,6 +19,8 @@ public class Donut extends JFrame {
         add(board);
         setResizable(false);
         pack();
+    
+        
         
         setTitle("Basic shapes");
         setLocationRelativeTo(null);

@@ -11,12 +11,14 @@ public class gravitationalField {
 	private acc_Vector [][] potentialMatrix;  //= new accelerationVector[10000][10000];
 	private double [][] fieldOccupancy; //= new double [10000][10000];
 	private List<blackHole> blackHoleList;
+	private int width, height;
 	
 	
 	
 	
-	public gravitationalField(int width, int height) {
-		
+	public gravitationalField(int w, int h) {
+		width = w;
+		height = h;
 		potentialMatrix = new acc_Vector[width][height];
 		
 		for(int i = 0; i < potentialMatrix.length; i++) {
@@ -34,6 +36,8 @@ public class gravitationalField {
 		
 	
 	}
+	
+
 	
 	public void updateFieldOccupancy(int x, int y, double m) {
 		
@@ -62,6 +66,17 @@ public class gravitationalField {
 	public void clearBlackHoles() {
 		
 		blackHoleList.clear();
+	}
+	
+	public void resetPotentialMatrix() {
+		for(int i = 0; i < potentialMatrix.length; i++) {
+			for(int j = 0; j < potentialMatrix[0].length; j++) {
+				
+				acc_Vector acc = new acc_Vector(0,0);
+				potentialMatrix[i][j] = acc;
+				
+			}
+		}
 	}
 	
 	

@@ -1,2 +1,2 @@
-200 200 all all 400 400 500 500
+200 200 all all all all 500 500
 all all all all all all all all

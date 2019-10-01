@@ -105,6 +105,16 @@ public class projectileNew extends prop{
 		return stationary;
 	}
 	
+	public void reset(int x, int y) {
+		
+		setPosition(x, y);
+		setVelocity(0,0);
+		setAcceleration(0,0);
+		setStationary(true);
+		resetPropAnimation();
+		
+	}
+	
 	
 	
 }
