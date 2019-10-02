@@ -58,6 +58,27 @@ public class satellite extends projectileNew
     	
     	
     }
+    
+    public int getX_Init() {
+    	
+    	return x_Init;
+    }
+    
+    public int getY_Init() {
+    	
+    	return y_Init;
+    }
+    
+    public double getX_Vel_Init() {
+    	
+    	
+    	return x_Vel_Init;
+    }
+    
+    public double getY_Vel_Init() {
+    	
+    	return y_Vel_Init;
+    }
 	
 	public void respawn() {
 		timer = new Thread(this);

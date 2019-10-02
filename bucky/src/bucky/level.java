@@ -41,7 +41,8 @@ public class level extends JPanel
 	
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
 	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
-	private List<Integer> starInitX, starInitY, blackInitX, blackInitY;
+	private List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY;
+	private List<Double> satInitXVel, satInitYVel;
 	
 	private double angle, tanAngle;
 
@@ -63,6 +64,7 @@ public class level extends JPanel
 	private gravitationalField gravityField;
 	private cat cat1, catCont;
 	private List<star> starList;
+	private List<satellite> satelliteList;
 	private goal gol;
 	private int lev;
 
@@ -87,9 +89,14 @@ public class level extends JPanel
 		starInitY = new ArrayList<Integer>();
 		blackInitX = new ArrayList<Integer>();
 		blackInitY = new ArrayList<Integer>();
+		satInitX = new ArrayList<Integer>();
+		satInitY = new ArrayList<Integer>();
+		satInitXVel = new ArrayList<Double>();
+		satInitYVel = new ArrayList<Double>();
 		
 		starList = new ArrayList<star>();
-		gravityField = new gravitationalField(width, height);		
+		satelliteList = new ArrayList<satellite>();
+		gravityField = new gravitationalField(width, height);
 		
 		setProps();	   //Read props data from level file and initializes props
 		setCanvasAppearance(); //Sets JPanel general appearance
@@ -97,6 +104,8 @@ public class level extends JPanel
 		//setInputPanel(); // Sets input buttons at button of panel
 		setEventHandlers(); //Sets event handlers
 		addElements();  //Adds panels to screen
+		
+		System.out.println(satInitX + " " + satInitY + " " + satInitXVel + " " + satInitYVel );
 
 
 		
@@ -229,6 +238,7 @@ public class level extends JPanel
         drawStar(image, g2d);
         drawBlackHole(image, g2d);
         drawGoal(image, g2d);
+        drawSatellite(image, g2d);
         drawLine(g);
         
     }
@@ -289,7 +299,39 @@ public class level extends JPanel
     		cat1.reset(catInitX, catInitY);
 
     	}
-    
+    	
+    	for(satellite s: satelliteList) {
+    		x = s.getX_Coord();
+    		y = s.getY_Coord();
+    		
+        	if(x < width && y < height && x > 0 && y > 0) {
+        		ax = gravityField.getAcc_Vector(x,y).getAcc_H();
+        		ay = gravityField.getAcc_Vector(x,y).getAcc_V();  		
+        	}
+    		
+        	if (s.getStationary() == false) {
+        		s.setAcceleration(ax, ay);
+        		s.accelerate();
+        		s.move();
+        		
+        	}
+        	
+        	Rectangle r2 = new Rectangle(s.getX_Coord(), s.getY_Coord(), 10, 10);
+        	if(drag == false && r.intersects(r2)) {
+        		cat1.reset(catInitX, catInitY);
+        		System.out.println("collided");
+        		
+        	}
+        	
+    		if(x > width || x < 0 || y > height || y < 0) {
+    			
+    			if(s.getTimer().isAlive() == false) {
+    				s.respawn();
+    			}
+    			
+    			
+    		}	
+    	}
     	
     }
     
@@ -368,6 +410,19 @@ public class level extends JPanel
     	
     }
     
+    private void addStringToDoubleList(List<Double> doubleList, String string) {
+    	
+    	if(string.contentEquals("all")) {
+	    		
+    	}
+    	else {
+    		doubleList.add(Double.parseDouble(string));
+    	}
+    	
+    	
+    }
+    
+    
     private void readPropData(BufferedReader br) {
     	
 
@@ -378,13 +433,18 @@ public class level extends JPanel
     			System.out.println("catInitBeforeSet " + catInitX);
     			catInitX = readStringAsInt(catInitX, parts[0]);
     			catInitY = readStringAsInt(catInitY, parts[1]);
-    			System.out.println("catInitSet");
-    			addStringToIntList(starInitX, parts[2]);
-    			addStringToIntList(starInitY, parts[3]);
-    			addStringToIntList(blackInitX, parts[4]);
-    			addStringToIntList(blackInitY, parts[5]);  
-    			goalInitX = readStringAsInt(goalInitX, parts[6]);
-    			goalInitY = readStringAsInt(goalInitY, parts[7]);
+    			goalInitX = readStringAsInt(goalInitX, parts[2]);
+    			goalInitY = readStringAsInt(goalInitY, parts[3]);
+    			addStringToIntList(starInitX, parts[4]);
+    			addStringToIntList(starInitY, parts[5]);
+    			addStringToIntList(blackInitX, parts[6]);
+    			addStringToIntList(blackInitY, parts[7]);
+    			addStringToIntList(satInitX, parts[8]);
+    			addStringToIntList(satInitY, parts[9]);
+    			addStringToDoubleList(satInitXVel, parts[10]);
+    			addStringToDoubleList(satInitYVel, parts[11]);
+    			
+
     			
 
             
@@ -405,7 +465,9 @@ public class level extends JPanel
     		cat1 = catCont;
     		cat1.setPosition(catInitX, catInitY);
     	}
-		
+		if(goalInitX != 0 && goalInitY != 0) {
+			gol = new goal(goalInitX, goalInitY, 10);	
+		}
 		
 		for(int i = 0; i < starInitX.size(); i++) {
 			
@@ -420,9 +482,18 @@ public class level extends JPanel
 	    	gravityField.addBlackHole(b);
 			
 		}
-		if(goalInitX != 0 && goalInitY != 0) {
-			gol = new goal(goalInitX, goalInitY, 10);	
+		
+		for(int i = 0; i < satInitX.size(); i++) {
+			
+	    	satellite s = new satellite(satInitX.get(i), satInitY.get(i), satInitXVel.get(i), satInitYVel.get(i), 3, 10);
+	    	satelliteList.add(s);
+	    
+			
 		}
+		
+		
+		
+
 
 		//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
     }
@@ -562,6 +633,16 @@ public class level extends JPanel
         }
         
     	
+    }
+    
+    private void drawSatellite(Image image, Graphics2D g2d) {
+    	
+    	for(satellite s : satelliteList) {
+    		g2d.drawOval(s.getX_Coord(), s.getY_Coord(), 10, 10);
+    		
+    	}
+    	
+  
     }
     
     private void drawLine(Graphics g) {

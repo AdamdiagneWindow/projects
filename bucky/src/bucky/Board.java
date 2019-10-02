@@ -161,6 +161,7 @@ public class Board extends JPanel
 		    	pres2Y = 0;
 		    	drag2X = 0;
 		    	drag2Y = 0;
+		    	label.setText("xVel " + s.getX_Vel() + "yVel " + s.getY_Vel());
 		    	
 		    }
 		    
@@ -424,6 +425,14 @@ public class Board extends JPanel
         		s.move();
         		
         	}
+        	
+        	Rectangle r2 = new Rectangle(s.getX_Coord(), s.getY_Coord(), 10, 10);
+        	if(drag == false && r.intersects(r2)) {
+        		cat1.reset(catInitX, catInitY);
+        		System.out.println("collided");
+        		
+        	}
+        	
     		if(x > width || x < 0 || y > height || y < 0) {
     			
     			if(s.getTimer().isAlive() == false) {
@@ -651,7 +660,7 @@ public class Board extends JPanel
     		 
     		calculateDragAngle();
     		image = cat1.getPulledSprite(angle);
-    		label.setText("angle" + angle);
+    		
     		
     		
     	}
@@ -746,6 +755,7 @@ public class Board extends JPanel
     
     private void clearLevel() {
     	starList.clear();
+    	satelliteList.clear();
     	gravityField.clearBlackHoles();
     	gravityField.resetPotentialMatrix();
     
@@ -782,6 +792,9 @@ public class Board extends JPanel
                 	if(blackHoleList.size() > maxListSize) {
                 		maxListSize = blackHoleList.size();
                 	}
+                	if(satelliteList.size() > maxListSize) {
+                		maxListSize = satelliteList.size();
+                	}
                 	if(maxListSize == 0) {
                 		maxListSize = 1;
                 	}
@@ -796,6 +809,13 @@ public class Board extends JPanel
                 		else {
                 			writeFileBuffer.write("all " + "all ");
                 		}
+                 		if(i == 0) {
+                			writeFileBuffer.write(gol.getX_Coord() + " ");
+                			writeFileBuffer.write(gol.getY_Coord() + " ");		
+                		}
+                		else {
+                			writeFileBuffer.write("all " + "all ");
+                		}               		
                 		
                 		if(starList.size() > i) {
                 			writeFileBuffer.write(starList.get(i).getX_Coord() + " ");
@@ -812,15 +832,27 @@ public class Board extends JPanel
                 		else {
                 			writeFileBuffer.write("all " + "all ");
                 		}
-
-
-                		if(i == 0) {
-                			writeFileBuffer.write(gol.getX_Coord() + " ");
-                			writeFileBuffer.write(gol.getY_Coord() + " ");		
+                		
+                		if(satelliteList.size() > i) {
+                			writeFileBuffer.write(satelliteList.get(i).getX_Init() + " ");
+                			writeFileBuffer.write(satelliteList.get(i).getY_Init() + " ");
+                			System.out.println("satelliteSaved");
                 		}
                 		else {
                 			writeFileBuffer.write("all " + "all ");
                 		}
+                		
+                		if(satelliteList.size() > i) {
+                			writeFileBuffer.write(satelliteList.get(i).getX_Vel_Init() + " ");
+                			writeFileBuffer.write(satelliteList.get(i).getY_Vel_Init() + " ");
+                		}
+                		else {
+                			writeFileBuffer.write("all " + "all ");
+                		}
+                		
+
+
+
                 		writeFileBuffer.newLine();
 	
                 	}

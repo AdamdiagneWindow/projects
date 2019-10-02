@@ -1,1 +1,1 @@
-186 226 all all all all 595 549 
+200 200 all all all all 500 500 
