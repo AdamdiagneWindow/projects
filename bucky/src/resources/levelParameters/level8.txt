@@ -1,0 +1,5 @@
+397 646 412 142 all all 410 405 776 311 -7.300000000000001 -1.2000000000000002 
+all all all all all all all all 784 510 -5.4 -6.300000000000001 
+all all all all all all all all 16 536 2.7 0.0 
+all all all all all all all all 27 546 7.0 0.9 
+all all all all all all all all 26 321 5.4 -1.3 

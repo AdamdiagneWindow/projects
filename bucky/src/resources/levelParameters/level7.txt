@@ -1,0 +1,6 @@
+202 193 564 518 all all all all 114 745 6.800000000000001 -10.200000000000001 
+all all all all all all all all 120 758 23.5 -27.8 
+all all all all all all all all 124 745 10.8 -16.2 
+all all all all all all all all 105 755 1.6 -2.0 
+all all all all all all all all 116 759 10.600000000000001 -14.600000000000001 
+all all all all all all all all 153 752 11.8 -19.3 
