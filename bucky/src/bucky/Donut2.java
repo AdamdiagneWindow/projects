@@ -21,9 +21,9 @@ public class Donut2 extends JFrame {
 	final static String LEVELTITLE = "Card with LevelTitle";
 	
 	Board board;
-	level lev;
-	levelTitle levTitle;
-	title titlePanel;
+	Level lev;
+	LevelTitle levTitle;
+	Title titlePanel;
 	
     public Donut2() {
 
@@ -52,13 +52,13 @@ public class Donut2 extends JFrame {
     	*/
     		
         
-       titlePanel = new title(/*cl, gamePanel, LEVELTITLE*/);
+       titlePanel = new Title(/*cl, gamePanel, LEVELTITLE*/);
         
        /*
     	board = new Board();*/
-       lev = new level(1);
+       lev = new Level(1);
        
-    	levTitle = new levelTitle(1);
+    	levTitle = new LevelTitle(1);
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
     	gamePanel.add(lev, GAMEPANEL);
@@ -83,14 +83,14 @@ public class Donut2 extends JFrame {
         
     }    
     
-    public void addLevel(int level, cat caT) {
+    public void addLevel(int level, Cat caT) {
     	lev = null;
-    	lev = new level(level, caT);
+    	lev = new Level(level, caT);
     	gamePanel.add(lev, GAMEPANEL);
     }
     
     public void addLevelTitle(int level){
-    	levTitle = new levelTitle(level);
+    	levTitle = new LevelTitle(level);
     	gamePanel.add(levTitle, LEVELTITLE);    	
     	
     }
@@ -102,7 +102,7 @@ public class Donut2 extends JFrame {
     
     
     
-   public title getTitlePanel() {
+   public Title getTitlePanel() {
 	   return titlePanel;
    }
     
@@ -110,11 +110,11 @@ public class Donut2 extends JFrame {
     	return board; 
     }
     
-    public level getLevel() {
+    public Level getLevel() {
     	return lev;
     }
     
-    public levelTitle getLevelTitle() {
+    public LevelTitle getLevelTitle() {
     	return levTitle;
     }
     

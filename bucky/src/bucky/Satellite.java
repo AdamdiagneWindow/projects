@@ -2,7 +2,7 @@ package bucky;
 
 import javax.swing.JOptionPane;
 
-public class satellite extends projectileNew 
+public class Satellite extends ProjectileNew 
 		implements Runnable{
 
 	private int spawnTime;
@@ -15,7 +15,7 @@ public class satellite extends projectileNew
 	private Thread timer;
 	private boolean exit;
 	
-	public satellite (int x, int y, double xVel, double yVel, int sDelay, int delay) {
+	public Satellite (int x, int y, double xVel, double yVel, int sDelay, int delay) {
 		
 		x_Coord = x;
 		y_Coord = y;

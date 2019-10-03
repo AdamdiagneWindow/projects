@@ -1,4 +1,1 @@
-100 300 100 300 150 200 400 200
-all all all all 200 250 all all
-all all all all 300 300 all all
-all all all all 300 500 all all
+133 171 626 570 all all 377 361 480 30 -5.300000000000001 5.4 

@@ -7,7 +7,8 @@ import javax.swing.JFrame;
 public class Donut extends JFrame {
 	
 	Board board;
-    
+    LevelEditor e;
+	
     public Donut() {
 
         initUI();
@@ -15,8 +16,12 @@ public class Donut extends JFrame {
 
     private void initUI() {
     	
+    	/*
     	board = new Board();
-        add(board);
+        add(board);*/
+    	
+    	e = new LevelEditor();
+    	add(e);
         setResizable(false);
         pack();
     
@@ -25,7 +30,8 @@ public class Donut extends JFrame {
         setTitle("Basic shapes");
         setLocationRelativeTo(null);
         
-        board.startTimer();
+        e.startTimer();
+        //board.startTimer();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }    
     

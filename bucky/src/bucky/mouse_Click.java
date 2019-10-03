@@ -76,9 +76,9 @@ public class mouse_Click extends JFrame {
   
   
   
-  final gravitationalField gravityField = new gravitationalField(panelWidth, panelHeight);
+  final GravitationalField gravityField = new GravitationalField(panelWidth, panelHeight);
   
-  blackHole b = new blackHole(300, 300, 100.00, 10);
+  BlackHole b = new BlackHole(300, 300, 100.00, 10);
   
   gravityField.addBlackHole(b);
   

@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.io.*; 
 
 
-public class levelTitle extends JPanel
+public class LevelTitle extends JPanel
 		implements Runnable{
 	
 	private final int delay = 25;
@@ -26,7 +26,7 @@ public class levelTitle extends JPanel
 	private Thread timer;
 	
 	
-	public levelTitle(int level) {
+	public LevelTitle(int level) {
 		
 		initLevelTitle(level);
 		

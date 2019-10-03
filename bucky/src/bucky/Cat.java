@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
-public class cat extends projectileNew {
+public class Cat extends ProjectileNew {
 	
 	private String flyingSpritesDir = "src/resources/catFlying.png", pulledSpritesDir = "src/resources/catPulled0.png";
 	private List<Image>  pulledSprites, flyingSprites;
 	private int rotationFrames = 9;
 	
-	public cat (int x, int y, double vx, double vy, double ax, double ay, int delay) {
+	public Cat (int x, int y, double vx, double vy, double ax, double ay, int delay) {
 		
 		
 		pulledSprites = new ArrayList<Image>(); 

@@ -1,10 +1,10 @@
 package bucky;
 
-public class blackHole extends prop{
+public class BlackHole extends Prop{
 
 	protected double mass;
 	
-	public blackHole(int x, int y, double m, int delay) {
+	public BlackHole(int x, int y, double m, int delay) {
 		
 		x_Coord = x;
 		y_Coord = y;

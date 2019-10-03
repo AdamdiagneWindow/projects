@@ -9,9 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Image;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -20,7 +17,6 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
-import java.util.List;
 import java.awt.BorderLayout;
 
 
@@ -36,18 +32,17 @@ public class Board extends JPanel
 	private final int delay = 25;
 	private Thread animator;
 	
-	private int time;
-	private int time2;
 	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY, starX, starY, satX, satY, pres2X, pres2Y, drag2X, drag2Y;
-	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
-	private List<Integer> starInitX, starInitY, blackInitX, blackInitY;
-	private String lev;
+	private int catInitX, catInitY, goalInitX, goalInitY;
+	private List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY;
+	private List<Double> satInitXVel, satInitYVel;
+	private String levString;
 	
 	private double angle, tanAngle;
 
 	private boolean drag = false, flipCat = false;
 	private boolean  settingSatVel = false;
-	private booleanClass addingBlackHole = new booleanClass() , addingGoal = new booleanClass(), addingStar = new booleanClass(), addingSatellite = new booleanClass();
+	private BooleanClass addingBlackHole = new BooleanClass() , addingGoal = new BooleanClass(), addingStar = new BooleanClass(), addingSatellite = new BooleanClass();
 	
     private JLabel label;
     
@@ -55,15 +50,17 @@ public class Board extends JPanel
     private JPanel inputPanel;
     
 
-    private JButton addBlackHole, addGoal, addSatellite, saveLevel, clear;    
+    private JButton  saveLevel, clear;    
     private JTextField inputLevel;
     
 	
-	private gravitationalField gravityField;
-	private cat cat1;
-	private List<prop> starList;
-	private List<satellite> satelliteList;
-	private goal gol;
+	private GravitationalField gravityField;
+	private Cat cat1, catCont;
+	private List<Prop> starList;
+	private List<Satellite> satelliteList;
+	private Goal gol;
+	private int lev;
+	
 
 	
 	public Board() {
@@ -73,14 +70,19 @@ public class Board extends JPanel
 	
 	private void initBoard() {
 		
+		lev = 1;
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
 		blackInitX = new ArrayList<Integer>();
 		blackInitY = new ArrayList<Integer>();
+		satInitX = new ArrayList<Integer>();
+		satInitY = new ArrayList<Integer>();
+		satInitXVel = new ArrayList<Double>();
+		satInitYVel = new ArrayList<Double>();
 		
-		starList = new ArrayList<prop>();
-		satelliteList = new ArrayList<satellite>();
-		gravityField = new gravitationalField(width, height);		
+		starList = new ArrayList<Prop>();
+		satelliteList = new ArrayList<Satellite>();
+		gravityField = new GravitationalField(width, height);		
 		
 		setProps();	   //Read props data from level file and initializes props
 		setCanvasAppearance(); //Sets JPanel general appearance
@@ -98,7 +100,7 @@ public class Board extends JPanel
 	private class HandlerClass implements MouseListener, MouseMotionListener{
 		public void mouseClicked(MouseEvent event) {
 			
-			
+			long time = 0;
 			currentX = event.getX();
 			currentY = event.getY();
 			label.setText("x = " + currentX + "     y = " + currentY);								
@@ -112,7 +114,7 @@ public class Board extends JPanel
 		    
 		    if (addingBlackHole.getBool() == true) {
 		    	
-		    	blackHole b = new blackHole(event.getX(), event.getY(), 5, 10);      // write black hole position
+		    	BlackHole b = new BlackHole(event.getX(), event.getY(), 5, 10);      // write black hole position
 		    	gravityField.addBlackHole(b);
 		    	
 		    	addingBlackHole.setBool(false);
@@ -124,7 +126,7 @@ public class Board extends JPanel
 		    	
 		    	if(gol == null) {
 		    		
-		    		gol = new goal(event.getX(), event.getY(), 10);
+		    		gol = new Goal(event.getX(), event.getY(), 10);
 		    	}
 		    	else {
 		    		gol.setPosition(event.getX(), event.getY());		    		 // write goal position
@@ -135,7 +137,7 @@ public class Board extends JPanel
 		    
 		    if (addingStar.getBool() == true) {
 		    	
-		    	star s = new star(event.getX(), event.getY(), 10);
+		    	Star s = new Star(event.getX(), event.getY(), 10);
 		    	starList.add(s);
 		    	addingStar.setBool(false);
 		    	
@@ -144,7 +146,7 @@ public class Board extends JPanel
 		    
 		    
 		    if (addingSatellite.getBool() == true) {
-		    	time2 = time;
+		    	time = System.currentTimeMillis();;
 		    	settingSatVel = true;
 		    	pres2X = event.getX();
 		    	pres2Y = event.getY();
@@ -153,8 +155,8 @@ public class Board extends JPanel
 		    
 		    
 		    
-		    else if (settingSatVel == true && time - time2 > 10) {
-		    	satellite s = new satellite(pres2X, pres2Y, 0.1*(drag2X - pres2X), 0.1*(drag2Y - pres2Y),3, 10);
+		    else if (settingSatVel == true && System.currentTimeMillis() - time > 10) {
+		    	Satellite s = new Satellite(pres2X, pres2Y, 0.1*(drag2X - pres2X), 0.1*(drag2Y - pres2Y),3, 10);
 		    	satelliteList.add(s);
 		    	settingSatVel = false;
 		    	pres2X = 0;
@@ -290,13 +292,12 @@ public class Board extends JPanel
 	
 	
 	private void setProps() {
-		
-
-		try (FileReader reader = new FileReader("src/resources/levelParameters/levelTest.txt");
+		System.out.println("setting props");
+		String dir = "src/resources/levelParameters/level" + lev + ".txt";
+		try (FileReader reader = new FileReader(dir);
 				BufferedReader br = new BufferedReader(reader)){
 			readPropData(br);
 			initProps();
-			//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
 		}
 		catch(IOException e) {
     		e.printStackTrace();
@@ -345,12 +346,13 @@ public class Board extends JPanel
         /*
         drawStar(image, g2d);
         drawBlackHole(image, g2d);*/
-        drawFromObjectList(image, g2d, starList, addingStar, starX, starY);
-        drawFromObjectList(image, g2d, gravityField.getBlackHoleList(), addingBlackHole, blackHoleX, blackHoleY);
+        drawFromObjectList(image, g2d, starList);
+        drawFromObjectList(image, g2d, gravityField.getBlackHoleList());
         drawGoal(image, g2d);
         drawSatellite(image, g2d);
         drawLine(g);
         drawLine2(g);
+        drawAddingMarkers(image, g2d);
         
     }
     
@@ -370,7 +372,7 @@ public class Board extends JPanel
     	
     	double ax = 0;
     	double ay = 0;
-    	if(gravityField != null && x < width && y < height && x > 0 && y > 0) {
+    	if(x < width && y < height && x > 0 && y > 0) {
     		ax = gravityField.getAcc_Vector(x,y).getAcc_H();
     		ay = gravityField.getAcc_Vector(x,y).getAcc_V();  		
     	}
@@ -390,10 +392,11 @@ public class Board extends JPanel
     	Rectangle r = cat1.getBounds(); 
     	if(drag == false && r.contains(gol.getX_Coord(), gol.getY_Coord()) ) {
      			cat1.reset(cat1.getX_Coord(), cat1.getY_Coord());
+     			endLevel();   
     			   		
     	}
     	
-        for (prop p : gravityField.getBlackHoleList()) {
+        for (Prop p : gravityField.getBlackHoleList()) {
         	Rectangle r2 = new Rectangle(p.getX_Coord() - p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
         	if(drag == false && r.intersects(r2)) {
         		cat1.reset(catInitX, catInitY);
@@ -410,7 +413,7 @@ public class Board extends JPanel
 
     	} 
     	
-    	for(satellite s: satelliteList) {
+    	for(Satellite s: satelliteList) {
     		x = s.getX_Coord();
     		y = s.getY_Coord();
     		
@@ -463,7 +466,6 @@ public class Board extends JPanel
     	while (true) {
     		
     		cycle();
-    		time++;
     		repaint();
     		
     		timeDiff = System.currentTimeMillis() - beforeTime;
@@ -520,21 +522,41 @@ public class Board extends JPanel
     	
     }
     
+    private void addStringToDoubleList(List<Double> doubleList, String string) {
+    	
+    	if(string.contentEquals("all")) {
+	    		
+    	}
+    	else {
+    		doubleList.add(Double.parseDouble(string));
+    	}
+    	
+    	
+    }
+    
     private void readPropData(BufferedReader br) {
+    	
+
     	try {
     		String line;
     		while ((line = br.readLine()) != null) {
     			String[] parts = line.split(" ");
-   
+    			System.out.println("catInitBeforeSet " + catInitX);
     			catInitX = readStringAsInt(catInitX, parts[0]);
     			catInitY = readStringAsInt(catInitY, parts[1]);
-    			addStringToIntList(starInitX, parts[2]);
-    			addStringToIntList(starInitY, parts[3]);
-    			addStringToIntList(blackInitX, parts[4]);
-    			addStringToIntList(blackInitY, parts[5]);   
-    			goalInitX = readStringAsInt(goalInitX, parts[6]);
-    			goalInitY = readStringAsInt(goalInitY, parts[7]);
+    			goalInitX = readStringAsInt(goalInitX, parts[2]);
+    			goalInitY = readStringAsInt(goalInitY, parts[3]);
+    			addStringToIntList(starInitX, parts[4]);
+    			addStringToIntList(starInitY, parts[5]);
+    			addStringToIntList(blackInitX, parts[6]);
+    			addStringToIntList(blackInitY, parts[7]);
+    			addStringToIntList(satInitX, parts[8]);
+    			addStringToIntList(satInitY, parts[9]);
+    			addStringToDoubleList(satInitXVel, parts[10]);
+    			addStringToDoubleList(satInitYVel, parts[11]);
+    			
 
+    			
 
             
     		}	    		
@@ -546,22 +568,40 @@ public class Board extends JPanel
     }
     
     private void initProps() {
-		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+    	
+    	if(catInitX != 0 && catInitY != 0 && lev == 1) {
+    		cat1 = new Cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+    		System.out.println("in the new");
+    	}
+    	
+    	if(catInitX != 0 && catInitY != 0 && lev > 1) {
+    		cat1 = catCont;
+    		cat1.setPosition(catInitX, catInitY);
+    		System.out.println("in the cont");
+    	}
+		if(goalInitX != 0 && goalInitY != 0) {
+			gol = new Goal(goalInitX, goalInitY, 10);	
+		}
 		
 		for(int i = 0; i < starInitX.size(); i++) {
 			
-			star s = new star(starInitX.get(i), starInitY.get(i), 10);
+			Star s = new Star(starInitX.get(i), starInitY.get(i), 10);
 			starList.add(s);
 			
 		}
 		
 		for(int i = 0; i < blackInitX.size(); i++) {
 			
-	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
+	    	BlackHole b = new BlackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
 	    	gravityField.addBlackHole(b);
 			
 		}
-		gol = new goal(goalInitX, goalInitY, 10);
+		
+		for(int i = 0; i < satInitX.size(); i++) {
+			
+	    	Satellite s = new Satellite(satInitX.get(i), satInitY.get(i), satInitXVel.get(i), satInitYVel.get(i), 3, 10);
+	    	satelliteList.add(s);	
+		}
 		//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
     }
     
@@ -688,46 +728,49 @@ public class Board extends JPanel
         	image = gol.getNextSprite();
         	g2d.drawImage(image, gol.getX_Coord(), gol.getY_Coord(), this);        	
         }
-        
-        if(addingGoal.getBool() == true) {
-        	
-        	g2d.drawRect(goalX, goalY, 10, 10);
-        	
-        }
     	
     }
     
     private void drawSatellite(Image image, Graphics2D g2d) {
     	
-    	for(satellite s : satelliteList) {
+    	for(Satellite s : satelliteList) {
     		g2d.drawOval(s.getX_Coord(), s.getY_Coord(), 10, 10);
     	}
-    		
-
+    	 	
     	
+    }
+    
+    private void drawFromObjectList(Image image, Graphics2D g2d, List<Prop >objectList) {
+    	
+        for (Prop p : objectList) {
+        	
+        	image = p.getNextSprite();
+            g2d.drawImage(image, p.getX_Coord() - p.getWidth()/2, p.getY_Coord() - p.getHeight()/2, this);
+     
+        }	
+    	
+    }
+    
+    private void drawAddingMarkers(Image image, Graphics2D g2d) {
+    	
+    	if(addingBlackHole.getBool() == true) {
+    		g2d.drawOval(blackHoleX, blackHoleY, 10, 10);
+    	}
+    	
+    	if(addingStar.getBool() == true) {
+    		g2d.drawOval(starX, starY, 10, 10);
+    	}
+    	
+        if(addingGoal.getBool() == true) {
+        	
+        	g2d.drawRect(goalX, goalY, 10, 10);
+        }
+        
         if(addingSatellite.getBool() == true) {
         	
         	g2d.drawRect(satX, satY, 10, 10);
         	
-        }    	
-    	
-    }
-    
-    private void drawFromObjectList(Image image, Graphics2D g2d, List<prop >objectList, booleanClass addingBool, int addingX, int addingY) {
-    	
-        for (prop p : objectList) {
-        	
-        	image = p.getNextSprite();
-            g2d.drawImage(image, p.getX_Coord(), p.getY_Coord(), this);
-            //g2d.drawRect(b.getX_Coord() + b.getWidth()/4, b.getY_Coord() + b.getHeight()/4, 20, 20);
-     
         }
-
-        if(addingBool.getBool() ==  true) {
-        	
-        	g2d.drawOval(addingX, addingY, 10, 10);
-        	
-        }    	
     	
     }
     
@@ -762,7 +805,7 @@ public class Board extends JPanel
     }
    
     
-    private void setAdderButton(int x, int y, final booleanClass addingBoolean) {
+    private void setAdderButton(int x, int y, final BooleanClass addingBoolean) {
     	
     	JButton addButton = new JButton();
     	addButton.setBounds(x, y, 20, 20);
@@ -784,10 +827,10 @@ public class Board extends JPanel
 			public void actionPerformed(ActionEvent e) {
 				
                 try {
-                	FileWriter fw = new FileWriter("src/resources/levelParameters/level" + lev + ".txt");
+                	FileWriter fw = new FileWriter("src/resources/levelParameters/level" + levString + ".txt");
                 	BufferedWriter writeFileBuffer = new BufferedWriter(fw);
                 	
-                	List <prop> blackHoleList = gravityField.getBlackHoleList();
+                	List <Prop> blackHoleList = gravityField.getBlackHoleList();
                 	int maxListSize = starList.size();
                 	if(blackHoleList.size() > maxListSize) {
                 		maxListSize = blackHoleList.size();
@@ -892,8 +935,8 @@ public class Board extends JPanel
 		inputLevel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				lev = inputLevel.getText();
-				System.out.println("level: " + lev);
+				levString = inputLevel.getText();
+				System.out.println("level: " + levString);
 			}
 
 		});
@@ -903,6 +946,11 @@ public class Board extends JPanel
     public Thread getAnimator() {
     	
     	return animator;
+    }
+    
+    private void endLevel() {
+    	cat1.reset(catInitX, catInitY);
+	
     }
     
 }

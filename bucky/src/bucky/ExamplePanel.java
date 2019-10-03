@@ -26,14 +26,14 @@ import java.awt.BorderLayout;
 
 
 
-public class examplePanel extends JPanel {
+public class ExamplePanel extends JPanel {
 
 	
 	private final int width = 800;
 	private final int height = 800;
 
 	
-	public examplePanel() {
+	public ExamplePanel() {
 		
 		initBoard();
 	}

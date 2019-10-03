@@ -1,8 +1,8 @@
 package bucky;
 
-public class goal extends prop{
+public class Goal extends Prop{
 
-	public goal(int x, int y, int delay) {
+	public Goal(int x, int y, int delay) {
 		
 		addSprite("src/resources/goal.png");
 		addSprite("src/resources/goal1.png");

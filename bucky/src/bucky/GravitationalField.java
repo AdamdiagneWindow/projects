@@ -4,27 +4,27 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class gravitationalField {
+public class GravitationalField {
 	
 	
 	
-	private acc_Vector [][] potentialMatrix;  //= new accelerationVector[10000][10000];
+	private Acc_Vector [][] potentialMatrix;  //= new accelerationVector[10000][10000];
 	private double [][] fieldOccupancy; //= new double [10000][10000];
-	private List<prop> blackHoleList;
+	private List<Prop> blackHoleList;
 	private int width, height;
 	
 	
 	
 	
-	public gravitationalField(int w, int h) {
+	public GravitationalField(int w, int h) {
 		width = w;
 		height = h;
-		potentialMatrix = new acc_Vector[width][height];
+		potentialMatrix = new Acc_Vector[width][height];
 		
 		for(int i = 0; i < potentialMatrix.length; i++) {
 			for(int j = 0; j < potentialMatrix[0].length; j++) {
 				
-				acc_Vector acc = new acc_Vector(0,0);
+				Acc_Vector acc = new Acc_Vector(0,0);
 				potentialMatrix[i][j] = acc;
 				
 			}
@@ -32,7 +32,7 @@ public class gravitationalField {
 		
 		
 		fieldOccupancy = new double[width][height];
-		blackHoleList = new ArrayList<prop>();
+		blackHoleList = new ArrayList<Prop>();
 		
 	
 	}
@@ -57,7 +57,7 @@ public class gravitationalField {
 				
 				double ay = 1000 * m *(ry/r)/(ry*ry + rx*rx);
 				double ax = 1000 * m *(rx/r)/(ry*ry + rx*rx);
-				acc_Vector acc = new acc_Vector(ax, ay);
+				Acc_Vector acc = new Acc_Vector(ax, ay);
 				potentialMatrix[i][j].add(acc);
 			}
 		}		
@@ -72,7 +72,7 @@ public class gravitationalField {
 		for(int i = 0; i < potentialMatrix.length; i++) {
 			for(int j = 0; j < potentialMatrix[0].length; j++) {
 				
-				acc_Vector acc = new acc_Vector(0,0);
+				Acc_Vector acc = new Acc_Vector(0,0);
 				potentialMatrix[i][j] = acc;
 				
 			}
@@ -80,7 +80,7 @@ public class gravitationalField {
 	}
 	
 	
-	public void addBlackHole(blackHole bHole) {
+	public void addBlackHole(BlackHole bHole) {
 		
 		blackHoleList.add(bHole);
 		
@@ -93,13 +93,13 @@ public class gravitationalField {
 			
 	}
 	
-	public acc_Vector getAcc_Vector(int x, int y) {
+	public Acc_Vector getAcc_Vector(int x, int y) {
 		
 		return potentialMatrix[x][y];
 				
 	}
 	
-	public List<prop> getBlackHoleList(){
+	public List<Prop> getBlackHoleList(){
 		
 		return blackHoleList;
 		

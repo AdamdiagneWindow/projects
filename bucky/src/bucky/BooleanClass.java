@@ -1,10 +1,10 @@
 package bucky;
 
-public class booleanClass {
+public class BooleanClass {
 
 	private boolean bool;
 	
-	booleanClass(){
+	BooleanClass(){
 		bool = false;
 		
 	}

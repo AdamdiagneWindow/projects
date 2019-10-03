@@ -6,20 +6,20 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
-public class projectileNew extends prop{
+public class ProjectileNew extends Prop{
 
 	protected double x_Vel, y_Vel, x_Acc, y_Acc;
-	protected imageRotate rotator;
+	protected ImageRotate rotator;
 	protected boolean stationary;
 	
-	public projectileNew() {
+	public ProjectileNew() {
 		
 		sprites = new ArrayList<Image>();
-		rotator = new imageRotate();
+		rotator = new ImageRotate();
 		stationary = true;	
 	}
 	
-	public projectileNew (int x, int y, double vx, double vy, double ax, double ay, int delay) {
+	public ProjectileNew (int x, int y, double vx, double vy, double ax, double ay, int delay) {
 		
 		x_Coord = x;
 		y_Coord = y;

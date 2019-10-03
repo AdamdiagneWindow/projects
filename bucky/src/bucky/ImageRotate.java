@@ -14,7 +14,7 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JPanel;
 
-public class imageRotate extends JPanel {
+public class ImageRotate extends JPanel {
 
 	
 	  
@@ -49,7 +49,7 @@ public class imageRotate extends JPanel {
 	
 	public static void main(String[] args) throws IOException {
 	
-		imageRotate2 rotate = new imageRotate2();
+		ImageRotate2 rotate = new ImageRotate2();
 		Image image;
 		ImageIcon icon = new ImageIcon("src/resources/cat1.png");
 		image = icon.getImage();

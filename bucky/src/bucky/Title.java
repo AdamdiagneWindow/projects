@@ -7,7 +7,7 @@ import java.awt.*;
 import javax.swing.*;
 
 
-public class title extends JPanel{
+public class Title extends JPanel{
 	
 	
 	private JButton start;
@@ -15,7 +15,7 @@ public class title extends JPanel{
 	private int width = 800;
 	private int height = 800;
 	
-	public title(/*final CardLayout cl, final Container pane, final String nextPanelName*/) {
+	public Title(/*final CardLayout cl, final Container pane, final String nextPanelName*/) {
 		
 		initTitle(/*cl, pane, nextPanelName*/);
 	}

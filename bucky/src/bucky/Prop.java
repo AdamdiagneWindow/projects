@@ -8,18 +8,18 @@ import java.util.ArrayList;
 import java.awt.Rectangle;
 
 
-public class prop {
+public class Prop {
 
 	protected int x_Coord, y_Coord, width, height, imageIndex = 0, count = 0, frameDelay, frameDelayInit;
 	protected List<Image> sprites;
 	
-	public prop() {
+	public Prop() {
 		
 		sprites = new ArrayList<Image>();
 		
 	}
 	
-	public prop (int x, int y, int delay){
+	public Prop (int x, int y, int delay){
 		
 		x_Coord = x;
 		y_Coord = y;

@@ -10,25 +10,25 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class projectile  {
+public class Projectile  {
 
 	private int x_Coord, y_Coord;
 	private int width, height;
 	private double x_Vel, y_Vel, x_Acc, y_Acc;
 	private List<Image> stationarySprites, pulledSprites, flyingSprites;
-	private imageRotate rotator;
+	private ImageRotate rotator;
 	
 	
 	private boolean stationary;
 	
-	public projectile (int x, int y, double vx, double vy, double ax, double ay)  {
+	public Projectile (int x, int y, double vx, double vy, double ax, double ay)  {
 		
 		stationarySprites = new ArrayList<Image>();
 		pulledSprites = new ArrayList<Image>(); 
 		flyingSprites = new ArrayList<Image>(); 
 		
 		
-		rotator = new imageRotate();
+		rotator = new ImageRotate();
 		
 		loadImage();
 		

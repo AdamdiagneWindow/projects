@@ -14,8 +14,6 @@ import java.awt.Rectangle;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -29,61 +27,55 @@ import java.awt.GraphicsEnvironment;
 
 
 
-public class level extends JPanel 
+public class Level extends JPanel 
 		implements Runnable{
 
 
-	private final int width = 800;
-	private final int height = 800;
+	protected final int width = 800;
+	protected final int height = 800;
 	private final int delay = 25;
-	private Thread animator;
+	protected Thread animator;
 
 	
-	private int currentX = 0, currentY = 0, presX = 0, presY = 0, dragX = 0, dragY = 0, blackHoleX = 0, blackHoleY = 0, goalX, goalY;
-	private int catInitX, catInitY, goalInitX, goalInitY, catNum, starNum, blackNum, goalNum;
-	private List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY;
-	private List<Double> satInitXVel, satInitYVel;
+	protected int  presX = 0, presY = 0, dragX = 0, dragY = 0;
+	protected int catInitX, catInitY, goalInitX, goalInitY;
+	
+	protected List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY;
+	protected List<Double> satInitXVel, satInitYVel;
 	
 	private double angle, tanAngle;
 
-	private boolean drag = false, flipCat = false;
-	private boolean addingBlackHole = false;
-	private boolean addingGoal = false;
+	protected boolean drag = false, flipCat = false;
+	
 	private boolean exit = false;
-	private boolean levelFinished;
+
+    protected JLabel label;
+    protected JPanel displayPanel;
 	
-	private Font pixelFont;
-	
-    private JLabel label;
-    private JPanel displayPanel;
-    private JPanel inputPanel;
-    private JButton addBlackHole;
-    private JButton addGoal;
-    
-	
-	private gravitationalField gravityField;
-	private cat cat1, catCont;
-	private List<star> starList;
-	private List<satellite> satelliteList;
-	private goal gol;
-	private int lev;
+	protected GravitationalField gravityField;
+	protected Cat cat1, catCont;
+	protected List<Prop> starList;
+	protected List<Satellite> satelliteList;
+	protected Goal gol;
+	protected int lev;
 
 	
-	public level(int level) {
+	public Level() {
+		
+	}
+	
+	public Level(int level) {
 		initLevel(level);
 	}
 	
-	public level(int level, cat caT) {
+	public Level(int level, Cat caT) {
 		catCont = caT;
 		initLevel(level);
 	}
 
 	private void initLevel(int level) {
 		
-		System.out.println("init");
-		System.out.println(catInitX);
 	    lev = level;
-	    levelFinished = false;
 	    exit = false;
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
@@ -94,9 +86,9 @@ public class level extends JPanel
 		satInitXVel = new ArrayList<Double>();
 		satInitYVel = new ArrayList<Double>();
 		
-		starList = new ArrayList<star>();
-		satelliteList = new ArrayList<satellite>();
-		gravityField = new gravitationalField(width, height);
+		starList = new ArrayList<Prop>();
+		satelliteList = new ArrayList<Satellite>();
+		gravityField = new GravitationalField(width, height);
 		
 		setProps();	   //Read props data from level file and initializes props
 		setCanvasAppearance(); //Sets JPanel general appearance
@@ -113,7 +105,7 @@ public class level extends JPanel
 	
 	
 	
-	private class HandlerClass implements MouseListener, MouseMotionListener{
+	public class HandlerClass implements MouseListener, MouseMotionListener{
 		public void mouseClicked(MouseEvent event) {
 			
 		
@@ -182,7 +174,7 @@ public class level extends JPanel
 	}
 	
 	
-	private void setProps() {
+	protected void setProps() {
 		System.out.println("setting props");
 		String dir = "src/resources/levelParameters/level" + lev + ".txt";
 		try (FileReader reader = new FileReader(dir);
@@ -212,11 +204,7 @@ public class level extends JPanel
 	}
 	
 
-	
-	
-	
-	
-    private void doDrawing(Graphics g) {
+    public void doDrawing(Graphics g) {
     
     	Image image = null ;
     	
@@ -235,10 +223,10 @@ public class level extends JPanel
   
         
         drawCat(image, g2d);
-        drawStar(image, g2d);
-        drawBlackHole(image, g2d);
         drawGoal(image, g2d);
         drawSatellite(image, g2d);
+        drawFromObjectList(image, g2d, gravityField.getBlackHoleList());
+        drawFromObjectList(image, g2d, starList);
         drawLine(g);
         
     }
@@ -282,7 +270,7 @@ public class level extends JPanel
     			endLevel();   		
     	}
     	
-        for (prop p : gravityField.getBlackHoleList()) {
+        for (Prop p : gravityField.getBlackHoleList()) {
         	Rectangle r2 = new Rectangle(p.getX_Coord() - p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
         	if(drag == false && r.intersects(r2)) {
         		cat1.reset(catInitX, catInitY);
@@ -295,12 +283,11 @@ public class level extends JPanel
     	
     	if(x > width || x < 0 || y > height || y < 0) {
     		System.out.println("out of bounds");
-    		System.out.println("x " + catInitX + "y " + catInitY);
     		cat1.reset(catInitX, catInitY);
 
     	}
     	
-    	for(satellite s: satelliteList) {
+    	for(Satellite s: satelliteList) {
     		x = s.getX_Coord();
     		y = s.getY_Coord();
     		
@@ -346,15 +333,8 @@ public class level extends JPanel
     	beforeTime = System.currentTimeMillis();
     	
     	while (exit != true) {
-    		/*
-    		if(breakLoop == true) {
-    			System.out.println("brokeOutOfLevel");
-    			break;
-
-    		}*/
     		
     		cycle();
-    		
     		repaint();
     		
     		timeDiff = System.currentTimeMillis() - beforeTime;
@@ -458,7 +438,7 @@ public class level extends JPanel
     
     private void initProps() {
     	if(catInitX != 0 && catInitY != 0 && lev == 1) {
-    		cat1 = new cat(catInitX, catInitY, 0, 0, 0, 0, 10);
+    		cat1 = new Cat(catInitX, catInitY, 0, 0, 0, 0, 10);
     	}
     	
     	if(catInitX != 0 && catInitY != 0 && lev > 1) {
@@ -466,45 +446,38 @@ public class level extends JPanel
     		cat1.setPosition(catInitX, catInitY);
     	}
 		if(goalInitX != 0 && goalInitY != 0) {
-			gol = new goal(goalInitX, goalInitY, 10);	
+			gol = new Goal(goalInitX, goalInitY, 10);	
 		}
 		
 		for(int i = 0; i < starInitX.size(); i++) {
 			
-			star s = new star(starInitX.get(i), starInitY.get(i), 10);
+			Star s = new Star(starInitX.get(i), starInitY.get(i), 10);
 			starList.add(s);
 			
 		}
 		
 		for(int i = 0; i < blackInitX.size(); i++) {
 			
-	    	blackHole b = new blackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
+	    	BlackHole b = new BlackHole(blackInitX.get(i), blackInitY.get(i), 5, 10);
 	    	gravityField.addBlackHole(b);
 			
 		}
 		
 		for(int i = 0; i < satInitX.size(); i++) {
 			
-	    	satellite s = new satellite(satInitX.get(i), satInitY.get(i), satInitXVel.get(i), satInitYVel.get(i), 3, 10);
-	    	satelliteList.add(s);
-	    
-			
+	    	Satellite s = new Satellite(satInitX.get(i), satInitY.get(i), satInitXVel.get(i), satInitYVel.get(i), 3, 10);
+	    	satelliteList.add(s);	
 		}
-		
-		
-		
-
-
 		//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
     }
     
-    private void setDisplayPanel() {
+    protected void setDisplayPanel() {
     	
 		displayPanel = new JPanel();
 		displayPanel.setPreferredSize(new Dimension(width, 20));
 		
 		try {
-			pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf"));
+			//pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf"));
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf")));
 					
@@ -521,19 +494,19 @@ public class level extends JPanel
     }
     
     
-    private void addElements() {
+    public void addElements() {
     	
 	    this.add(displayPanel, BorderLayout.NORTH);
     }
     
-    private void setEventHandlers() {
+    protected void setEventHandlers() {
     	
 		HandlerClass handler = new HandlerClass();
 		this.addMouseListener(handler);
 		this.addMouseMotionListener(handler);
     }
     
-    private void setCanvasAppearance() {
+    protected void setCanvasAppearance() {
     	
 		setBackground(Color.BLACK);
 		setPreferredSize(new Dimension(width, height));    //setCanvasAppearance
@@ -573,7 +546,7 @@ public class level extends JPanel
     	
     }
     
-    private void drawCat(Image image, Graphics2D g2d) {
+    protected void drawCat(Image image, Graphics2D g2d) {
     	
     	
     	if(cat1.getStationary() == true) {
@@ -605,27 +578,9 @@ public class level extends JPanel
     	
     	
     }
-    
-    private void drawStar(Image image, Graphics2D g2d) {
-        for (star s : starList) {
-        	image = s.getNextSprite();
-            g2d.drawImage(image, s.getX_Coord(), s.getY_Coord(), this);
-        	
-        }
-    }
-    
-    private void drawBlackHole(Image image, Graphics2D g2d) {
-        for (prop p : gravityField.getBlackHoleList()) {
-        	
-        	image = p.getNextSprite();
-            g2d.drawImage(image, p.getX_Coord(), p.getY_Coord(), this);
-        	//g2d.drawRect(b.getX_Coord() + b.getWidth()/4, b.getY_Coord() + b.getHeight()/4, 20, 20);
-           //g2d.drawRect((int)rec.getX(), (int)rec.getY(), 20, 20);
-        }
-        
-    }
  
-    private void drawGoal(Image image, Graphics2D g2d) {
+ 
+    protected void drawGoal(Image image, Graphics2D g2d) {
     	
         if(gol != null) {
         	image = gol.getNextSprite();
@@ -635,9 +590,9 @@ public class level extends JPanel
     	
     }
     
-    private void drawSatellite(Image image, Graphics2D g2d) {
+    protected void drawSatellite(Image image, Graphics2D g2d) {
     	
-    	for(satellite s : satelliteList) {
+    	for(Satellite s : satelliteList) {
     		g2d.drawOval(s.getX_Coord(), s.getY_Coord(), 10, 10);
     		
     	}
@@ -645,7 +600,20 @@ public class level extends JPanel
   
     }
     
-    private void drawLine(Graphics g) {
+    protected void drawFromObjectList(Image image, Graphics2D g2d, List<Prop >objectList) {
+    	
+        for (Prop p : objectList) {
+        	
+        	image = p.getNextSprite();
+        	g2d.drawImage(image, p.getX_Coord() - p.getWidth()/2, p.getY_Coord() - p.getHeight()/2, this);
+         
+     
+        }
+ 	
+    	
+    }
+    
+    protected void drawLine(Graphics g) {
     	
         if(dragX == 0 && dragY == 0) {
         	
@@ -661,7 +629,7 @@ public class level extends JPanel
     	return animator;
     }
     
-    private void endLevel() {
+    public void endLevel() {
     	//levelFinished = true;
     	exit = true;
         System.out.println("I should be called only once");
