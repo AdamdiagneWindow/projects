@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 
-public class Donut extends JFrame {
+public class GameEditor extends JFrame {
 	
 	Board board;
     LevelEditor e;
 	
-    public Donut() {
+    public GameEditor() {
 
         initUI();
     }
@@ -39,7 +39,7 @@ public class Donut extends JFrame {
 
         
        
-                Donut ex = new Donut();
+                GameEditor ex = new GameEditor();
                 ex.setVisible(true);
     }
 }

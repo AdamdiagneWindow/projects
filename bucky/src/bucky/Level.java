@@ -633,7 +633,7 @@ public class Level extends JPanel
     	//levelFinished = true;
     	exit = true;
         System.out.println("I should be called only once");
-		Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
+		GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
 		f1.addLevel(lev + 1, cat1);
 		f1.addLevelTitle(lev + 1);
 		exit = true;

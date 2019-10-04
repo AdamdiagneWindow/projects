@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 
-public class Donut2 extends JFrame {
+public class GameLauncher extends JFrame {
     
 	JPanel gamePanel;
 	String test = " test";
@@ -25,7 +25,7 @@ public class Donut2 extends JFrame {
 	LevelTitle levTitle;
 	Title titlePanel;
 	
-    public Donut2() {
+    public GameLauncher() {
 
         initUI();
     }
@@ -122,7 +122,7 @@ public class Donut2 extends JFrame {
     public static void main(String[] args) {
 
 
-                Donut2 ex = new Donut2();
+                GameLauncher ex = new GameLauncher();
                 ex.setVisible(true);
                 
     }

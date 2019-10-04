@@ -89,7 +89,7 @@ public class LevelTitle extends JPanel
 		if (counter == 10) {
 			System.out.println("iniii");
 			//breakLoop = true;
-			Donut2 f1 = (Donut2) SwingUtilities.windowForComponent(this);
+			GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
 			this.setVisible(false);
 			f1.getTitlePanel().setVisible(false);
 			//System.out.println("flicker");
