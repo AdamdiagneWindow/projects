@@ -11,6 +11,14 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL"/>
+	<classpathentry kind="lib" path="C:/Users/Manso/Downloads/jbox2d-master.zip"/>
+	<classpathentry kind="lib" path="C:/Users/Manso/Downloads/wiengine-box2d.jar/wiengine-box2d.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jbox2d-library"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

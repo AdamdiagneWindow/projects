@@ -1,5 +1,6 @@
 package bucky;
 
+
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -20,7 +21,7 @@ public class GameLauncher extends JFrame {
 	final static String GAMEPANEL = "Card with BoardPanel";
 	final static String LEVELTITLE = "Card with LevelTitle";
 	
-	Board board;
+	
 	Level lev;
 	LevelTitle levTitle;
 	Title titlePanel;
@@ -34,42 +35,24 @@ public class GameLauncher extends JFrame {
     	
     	
     	gamePanel = new JPanel(new CardLayout());
-       // final CardLayout cl = (CardLayout)(gamePanel.getLayout());  
         
-        /*
-    	JPanel titlePanel = new JPanel();
-    	
-    	JButton play = new JButton("Play");
-    	
-    	play.addActionListener(new ActionListener(){
-    		public void actionPerformed(ActionEvent e) {
-    			
-    			cl.show(gamePanel, GAMEPANEL);
-    		}
-    	});
-    	
-    	titlePanel.add(play);
-    	*/
-    		
+        titlePanel = new Title();
         
-       titlePanel = new Title(/*cl, gamePanel, LEVELTITLE*/);
-        
-       /*
-    	board = new Board();*/
-       lev = new Level(1);
+        lev = new Level(1);
        
     	levTitle = new LevelTitle(1);
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
     	gamePanel.add(lev, GAMEPANEL);
     	gamePanel.add(levTitle, LEVELTITLE);
-    	
-       
-        //cl.show(gamePanel, TITLEPANEL);
+
     	titlePanel.setVisible(true);
         
-        
-        
+    	
+    	//lev.setVisible(true);// Remove
+        //lev.startTimer(); //Remove this in real game
+    	
+    	
         add(gamePanel);
         
         setResizable(false);
@@ -106,9 +89,6 @@ public class GameLauncher extends JFrame {
 	   return titlePanel;
    }
     
-    public Board getBoard() {
-    	return board; 
-    }
     
     public Level getLevel() {
     	return lev;

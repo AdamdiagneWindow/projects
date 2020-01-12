@@ -3,10 +3,11 @@ package bucky;
 import java.io.IOException;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
+import org.lwjgl.*;
 
 public class GameEditor extends JFrame {
 	
-	Board board;
+	
     LevelEditor e;
 	
     public GameEditor() {
