@@ -5,7 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import org.lwjgl.*;
 
-
+//This is a drained edition
 public class GameEditor extends JFrame {
 	
 	
