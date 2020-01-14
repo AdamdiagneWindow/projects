@@ -218,6 +218,7 @@ public abstract class ProjectileNew extends Prop{
 	protected int x_Prev = 0, y_Prev = 0, x_2Prev = 0, y_2Prev = 0, x_3Prev = 0, y_3Prev = 0, x_4Prev = 0, y_4Prev = 0;
 	protected ImageRotate rotator;
 	protected boolean stationary;
+	protected boolean allowReset;
 	
 	public ProjectileNew() {
 		
@@ -274,10 +275,6 @@ public abstract class ProjectileNew extends Prop{
 		
 	}
 	
-	
-	
-
-	
 	public void setVelocity(double vx, double vy) {
 		
 		if(Math.abs(vx) < 1) {
@@ -299,6 +296,7 @@ public abstract class ProjectileNew extends Prop{
 			
 		}
 		
+		System.out.println("setting vel to: x: " + vx + " vy: " + vy);
 	    body.setLinearVelocity(new Vec2((float)vx, (float)vy));	
 		
 	}
@@ -309,9 +307,15 @@ public abstract class ProjectileNew extends Prop{
 		stationary = state;
 	}
 	
+	public void setAllowReset(boolean state) {
+		
+		allowReset = state;
+	}
+	
 	public void applyForce(double fx, double fy) {
 		
 		body.applyForce(new Vec2((float)fx, (float)fy), body.getWorldCenter());
+		System.out.println("force applied");
 	}
 	
 	public int getX_Prev(int i) {
@@ -376,10 +380,16 @@ public abstract class ProjectileNew extends Prop{
 		return stationary;
 	}
 	
+	public boolean getAllowReset() {
+		
+		return allowReset;
+	}
+	
 	public void reset(int x, int y) {
 		
-		setPosition(x, y);
+		System.out.println("reset");
 		setVelocity(0,0);
+		setPosition(x, y);
 		setStationary(true);
 		resetPropAnimation();
 		

@@ -206,7 +206,8 @@ public class Prop {
 		fd.shape = shape;                  
 		fd.density = 0.0f;                   //Default Density. Change with setDensity function
 		fd.restitution = 1;                   //Default Restitution. Change with setRestitution function
-		fd.filter.maskBits = 0;
+		//fd.filter.maskBits = 0;
+		fd.isSensor  = true;
 		body.createFixture(fd);
 		body.setUserData(this);
 	
@@ -251,6 +252,7 @@ public class Prop {
 		
 		Vec2 position = new Vec2((float)x, (float)y);
 		body.setTransform( position, 0);
+	
 		
 	}
 	
@@ -260,6 +262,7 @@ public class Prop {
 		
 	}
 	
+
 	public void resetPropAnimation() {
 		
 		imageIndex = 0;
@@ -322,16 +325,18 @@ public class Prop {
 		return (int)body.getPosition().y;
 	}
 	
+
 	public void startContact() {
-		System.out.println("start contact");
+		//System.out.println("start contact");
 		
 	}
 	
 	public void endContact() {
-		System.out.println("end contact");
+		//System.out.println("end contact");
 		
 	}
 	
+
 	
 	
 	

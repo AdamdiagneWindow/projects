@@ -105,6 +105,7 @@ public class Cat extends ProjectileNew {
 	private String flyingSpritesDir = "src/resources/catFlying.png", pulledSpritesDir = "src/resources/catPulled0.png";
 	private List<Image>  pulledSprites, flyingSprites;
 	private int rotationFrames = 9;
+	private boolean allowEndLevel;
 	
 	public Cat (int x, int y, double vx, double vy, int delay, World world) {
 		
@@ -140,7 +141,10 @@ public class Cat extends ProjectileNew {
 		
 	}
 	
-	
+	public void setAllowEndLevel(boolean state) {
+		
+		allowEndLevel = state;
+	}
 	
 	public Image getFlyingSprite() {
 		
@@ -166,6 +170,11 @@ public class Cat extends ProjectileNew {
 		
 		animateVarDelay();
 		return getFlyingSprite();
+	}
+	
+	public boolean getAllowEndLevel() {
+		
+		return allowEndLevel;
 	}
 	
 	

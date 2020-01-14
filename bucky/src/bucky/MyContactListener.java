@@ -11,16 +11,36 @@ public class MyContactListener implements ContactListener {
 	
 	
 	public void beginContact(Contact contact) {
-		System.out.println("contactListener");
-		Object bodyUserData = contact.getFixtureA().getBody().getUserData();
-		((ProjectileNew)bodyUserData).startContact();
 		
+		Object bodyUserData_A = contact.getFixtureA().getBody().getUserData();
+		Object bodyUserData_B = contact.getFixtureB().getBody().getUserData();
+		//((ProjectileNew)bodyUserData_A).startContact();
+		
+		String className_A = bodyUserData_A.getClass().getSimpleName();
+	    String className_B = bodyUserData_B.getClass().getSimpleName();
+		
+		if((className_A.contentEquals("Cat") && className_B.contentEquals("Goal")) ||   
+				(className_B.contentEquals("Cat") && className_A.contentEquals("Goal"))) {
+			
+			((Cat)bodyUserData_A).setAllowReset(true);
+			((Cat)bodyUserData_A).setAllowEndLevel(true);
+			
+		}
+		
+		if((className_A.contentEquals("Cat") && className_B.contentEquals("BlackHole")) ||   
+				(className_B.contentEquals("Cat") && className_A.contentEquals("BlackHole"))) {
+			
+			((Cat)bodyUserData_A).setAllowReset(true);
+    		System.out.println("sucked");
+			
+			
+		}
+		
+
 	}
 	
 	
 	public void endContact(Contact contact) {
-		Object bodyUserData = contact.getFixtureA().getBody().getUserData();
-		((ProjectileNew)bodyUserData).endContact();
 		
 	}
 	

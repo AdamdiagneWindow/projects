@@ -960,13 +960,23 @@ public class Level extends JPanel
     
     private void cycle() {
     	
-    	//System.out.println(cat1.getStationary());
+      	if(cat1.getAllowReset() == true) {
+    		cat1.setAllowReset(false);
+    		cat1.reset(catInitX, catInitY);
+    		
+    	}     	
+    	
+    	System.out.println("vx: " + cat1.getX_Vel() + " vy: " + cat1.getY_Vel());
     	
     	int x = cat1.getX_Coord();
     	int y = cat1.getY_Coord();
     	
+ 	
+    	
     	double fx = 0;
     	double fy = 0;
+    	
+    	
     	if(x < width && y < height && x > 0 && y > 0) {
     		fx = gravityField.getForceVector(x,y).getForce_H();
     		fy = gravityField.getForceVector(x,y).getForce_V();  		
@@ -975,17 +985,26 @@ public class Level extends JPanel
     	
     	if (cat1.getStationary() == false) {
     		cat1.applyForce(fx, fy);
+
     	}
     	
-    	
+    	if(cat1.getStationary() == true) {				//fix cats lingering velocity
+    		
+    	    //cat1.setVelocity(0,0);
+    	}
     	
     	Rectangle r = cat1.getBounds(); 
     	
-    	if(drag == false && r.contains(gol.getX_Coord(), gol.getY_Coord()) ) {
-     			cat1.reset(cat1.getX_Coord(), cat1.getY_Coord());
-    			endLevel();   		
+    	
+    	
+
+    	
+    	if(cat1.getAllowEndLevel() == true) {
+    		cat1.setAllowEndLevel(false);
+    		endLevel();
     	}
     	
+    	/*
         for (Prop p : gravityField.getBlackHoleList()) {
         	Rectangle r2 = new Rectangle(p.getX_Coord() - p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
         	if(drag == false && r.intersects(r2)) {
@@ -993,7 +1012,7 @@ public class Level extends JPanel
         		System.out.println("sucked");
         	}
         	
-        }
+        }*/
     	
     	 
     	
@@ -1126,7 +1145,11 @@ public class Level extends JPanel
     		}
     		
     	}
-  		world.step(timeStep, velocityIterations, positionIterations);
+    	
+    	if(world != null) {
+    		  		world.step(timeStep, velocityIterations, positionIterations);
+    	}
+
     	
     }
     
