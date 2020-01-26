@@ -12,6 +12,7 @@ public class MyContactListener implements ContactListener {
 	
 	public void beginContact(Contact contact) {
 		
+		
 		Object bodyUserData_A = contact.getFixtureA().getBody().getUserData();
 		Object bodyUserData_B = contact.getFixtureB().getBody().getUserData();
 		//((ProjectileNew)bodyUserData_A).startContact();
@@ -36,6 +37,26 @@ public class MyContactListener implements ContactListener {
 			
 		}
 		
+		if((className_A.contentEquals("Cat") && className_B.contentEquals("Satellite")) ||   
+				(className_B.contentEquals("Cat") && className_A.contentEquals("Satellite"))) {
+				
+			System.out.println("collided");
+			
+		}
+		
+		if((className_A.contentEquals("Satellite") && className_B.contentEquals("BlackHole")) ||   
+				(className_B.contentEquals("Satellite") && className_A.contentEquals("BlackHole"))) {
+			if(className_A.contentEquals("Satellite")) {
+				((Satellite)bodyUserData_A).setAllowReset(true);
+			}
+			if(className_B.contentEquals("Satellite")) {
+				((Satellite)bodyUserData_B).setAllowReset(true);
+			}
+			
+
+			System.out.println("Sucked");
+			
+		}
 
 	}
 	

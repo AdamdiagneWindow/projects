@@ -120,8 +120,6 @@ import java.util.ArrayList;
 
 public class GravitationalField {
 	
-	
-	
 	private ForceVector [][] fieldMatrix;  //= new accelerationVector[10000][10000];
 	private double [][] fieldOccupancy; //= new double [10000][10000];
 	private List<Prop> blackHoleList;
@@ -177,11 +175,7 @@ public class GravitationalField {
 		}		
 	}
 	
-	public void clearBlackHoles() {
-		
-		blackHoleList.clear();
-	}
-	
+
 	public void resetPotentialMatrix() {
 		for(int i = 0; i < fieldMatrix.length; i++) {
 			for(int j = 0; j < fieldMatrix[0].length; j++) {

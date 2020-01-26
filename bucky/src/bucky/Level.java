@@ -746,7 +746,7 @@ public class Level extends JPanel
 	protected int  presX = 0, presY = 0, dragX = 0, dragY = 0;
 	protected int catInitX, catInitY, goalInitX, goalInitY;
 	
-	protected List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY;
+	protected List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY, wallInitX, wallInitY;
 	protected List<Double> satInitXVel, satInitYVel;
 	
 	private double angle, tanAngle;
@@ -768,9 +768,9 @@ public class Level extends JPanel
 	protected int lev;
 	
 	protected World world;
-	private float timeStep = 1.0f/60.0f;
-	private int velocityIterations = 8;
-	private int positionIterations = 3;
+	private float timeStep = 1.0f/60.0f;     //was 1/60
+	private int velocityIterations = 3;  //was8
+	private int positionIterations = 2;   // was3
 	
 	MyContactListener myContactListenerInstance;
 	
@@ -801,8 +801,11 @@ public class Level extends JPanel
 		blackInitY = new ArrayList<Integer>();
 		satInitX = new ArrayList<Integer>();
 		satInitY = new ArrayList<Integer>();
+		wallInitX = new ArrayList<Integer>();
+		wallInitY = new ArrayList<Integer>();
 		satInitXVel = new ArrayList<Double>();
 		satInitYVel = new ArrayList<Double>();
+		
 		
 		starList = new ArrayList<Prop>();
 		wallList = new ArrayList<Prop>();
@@ -873,7 +876,11 @@ public class Level extends JPanel
 			if(drag == true && cat1.getStationary() == true) {
 				dragX = event.getX();
 				dragY = event.getY();
-				cat1.setPosition(event.getX(), event.getY());
+				
+				Rectangle newDragVector = new Rectangle(0, 0, 0, 0);
+				newDragVector = limitDrag(presX, presY, dragX, dragY);	          //ForceVector used to store a vector	
+				
+				cat1.setPosition((int)newDragVector.getX(), (int)newDragVector.getY());
 			}
 			
 			
@@ -960,13 +967,13 @@ public class Level extends JPanel
     
     private void cycle() {
     	
+    	
       	if(cat1.getAllowReset() == true) {
     		cat1.setAllowReset(false);
     		cat1.reset(catInitX, catInitY);
     		
-    	}     	
-    	
-    	System.out.println("vx: " + cat1.getX_Vel() + " vy: " + cat1.getY_Vel());
+    	}
+      	
     	
     	int x = cat1.getX_Coord();
     	int y = cat1.getY_Coord();
@@ -987,89 +994,21 @@ public class Level extends JPanel
     		cat1.applyForce(fx, fy);
 
     	}
-    	
-    	if(cat1.getStationary() == true) {				//fix cats lingering velocity
-    		
-    	    //cat1.setVelocity(0,0);
-    	}
-    	
-    	Rectangle r = cat1.getBounds(); 
-    	
-    	
-    	
-
-    	
+     
+ 
     	if(cat1.getAllowEndLevel() == true) {
     		cat1.setAllowEndLevel(false);
     		endLevel();
     	}
-    	
-    	/*
-        for (Prop p : gravityField.getBlackHoleList()) {
-        	Rectangle r2 = new Rectangle(p.getX_Coord() - p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
-        	if(drag == false && r.intersects(r2)) {
-        		cat1.reset(catInitX, catInitY);
-        		System.out.println("sucked");
-        	}
-        	
-        }*/
-    	
-    	 
-    	
+    
+	
     	if(x > width || x < 0 || y > height || y < 0) {
     		System.out.println("out of bounds");
     		cat1.reset(catInitX, catInitY);
 
     	}
     	
-    	for(Satellite s: satelliteList) {
-    		x = s.getX_Coord();
-    		y = s.getY_Coord();
-    		
-    		
-    		
-        	if(x < width && y < height && x > 0 && y > 0) {
-        		fx = gravityField.getForceVector(x,y).getForce_H();
-        		fy = gravityField.getForceVector(x,y).getForce_V();  		
-        	}
-    		//System.out.println("fx: " + fx + " fy " + fy + " x: " + x + " y: " + y);
-        	if (s.getStationary() == false) {
-        		s.applyForce(fx, fy);
-
-        		
-        	}
-        	
-        	Rectangle r2 = new Rectangle(x, y, 10, 10);
-        	if(drag == false && r.intersects(r2)) {
-        		cat1.reset(catInitX, catInitY);
-        		System.out.println("collided");
-        		
-        	}
-        	
-        	
-        	
-            for (Prop p : gravityField.getBlackHoleList()) {
-            	Rectangle r3 = new Rectangle(p.getX_Coord() - p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
-            	if(drag == false && r3.intersects(r2)) {
-          
-        			if(s.getTimer().isAlive() == false) {
-        				s.respawn();
-        			}
-            		System.out.println("sucked");
-            	}
-            	
-            }
-        	
-        	
-    		if(x > width || x < 0 || y > height || y < 0) {
-    			
-    			if(s.getTimer().isAlive() == false) {
-    				s.respawn();
-    			}
-    			
-    			
-    		}	
-    	}
+    	
     	
 		//System.out.println("xPos: " + cat1.getX_Coord());
 		//System.out.println("yPos: " + cat1.getY_Coord());
@@ -1078,7 +1017,7 @@ public class Level extends JPanel
     	
     	
     	
-    	
+    	/*
     	for(Prop w: wallList) {
     		
     		x = w.getX_Coord();
@@ -1144,11 +1083,64 @@ public class Level extends JPanel
     			
     		}
     		
-    	}
+    	}*/
     	
     	if(world != null) {
     		  		world.step(timeStep, velocityIterations, positionIterations);
+
     	}
+		
+  		cat1.processOperations();
+  		gol.processOperations();
+  		
+  		
+  		for(Satellite s : satelliteList) {
+  			
+  			s.processOperations();
+  			
+          	if(s.getAllowReset() == true) {
+        		s.setAllowReset(false);
+    			if(s.getTimer().isAlive() == false) {
+    				s.respawn();
+    				
+    			}
+        		
+        	}
+    		
+    		x = s.getX_Coord();
+    		y = s.getY_Coord();
+    		
+    	
+    		
+        	if(x < width && y < height && x > 0 && y > 0) {
+        		fx = gravityField.getForceVector(x,y).getForce_H();
+        		fy = gravityField.getForceVector(x,y).getForce_V();  		
+        	}
+    		
+        	if (s.getStationary() == false) {
+        		s.applyForce(fx, fy);
+
+        	}
+        	
+
+        	
+    		x = s.getX_Coord();
+    		y = s.getY_Coord();
+        	
+    		if(x > width || x < 0 || y > height || y < 0) {
+    			
+    			//System.out.println("time is alive: " + s.getTimer().isAlive());
+    			if(s.getTimer().isAlive() == false) {
+    				
+    				s.respawn();
+    				//System.out.println("out of bounds respawn");
+    			}
+    			
+    			
+    			
+    		}	
+
+  		}
 
     	
     }
@@ -1254,6 +1246,8 @@ public class Level extends JPanel
     			addStringToIntList(satInitY, parts[9]);
     			addStringToDoubleList(satInitXVel, parts[10]);
     			addStringToDoubleList(satInitYVel, parts[11]);
+    			addStringToIntList(wallInitX, parts[12]);
+    			addStringToIntList(wallInitY, parts[13]);
     			
 
     			
@@ -1283,7 +1277,7 @@ public class Level extends JPanel
 		
 		for(int i = 0; i < blackInitX.size(); i++) {
 			
-	    	BlackHole b = new BlackHole(blackInitX.get(i), blackInitY.get(i), 5, 50, world);
+	    	BlackHole b = new BlackHole(blackInitX.get(i), blackInitY.get(i), 2.5, 50, world);
 	    	gravityField.addBlackHole(b);
 			
 		}
@@ -1294,6 +1288,14 @@ public class Level extends JPanel
 	    	satelliteList.add(s);	
 		}
 		//scan = new Scanner(new File("src/resources/levelParameters/level1.txt"));
+		
+		for(int i = 0; i < wallInitX.size(); i++) {
+			
+			Wall w = new Wall(wallInitX.get(i), wallInitY.get(i), 50, world);
+			wallList.add(w);
+			
+		}
+		
     }
     
     protected void setDisplayPanel() {
@@ -1371,9 +1373,64 @@ public class Level extends JPanel
     	
     }
     
+    protected Rectangle limitDrag( int presX, int presY, int dragX, int dragY) {
+   
+		int newDragX = 0, newDragY = 0;
+		
+		double xDiff = dragX - presX, yDiff = dragY - presY, newXDiff = 0, newYDiff = 0;
+			
+		double angle = Math.abs(Math.atan(yDiff/xDiff));	
+		double mag = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+		
+
+		
+		if(mag > 100) {
+			
+			double angleOrig = angle;
+			Rectangle direction = new Rectangle(0,0);  // Rectangle used to store a vector
+			if(xDiff >= 0 && yDiff <= 0) {
+				angle = angle;
+				direction.setBounds(1,-1, 0, 0);
+			}
+			
+			if(xDiff <= 0 && yDiff <= 0) {
+				angle = (Math.PI/2 - angle) + Math.PI/2;
+				direction.setBounds(-1,-1, 0, 0);
+			}
+			
+			if(xDiff <= 0 && yDiff >= 0) {
+				angle = angle + Math.PI;
+				direction.setBounds(-1, 1, 0, 0);
+			}					
+			
+			if(xDiff >= 0 && yDiff >= 0) {
+				angle = (Math.PI/2 - angle) + 3.0*Math.PI/2;
+				direction.setBounds(1, 1, 0, 0);
+			}
+			newXDiff = direction.getX()*(Math.sqrt(Math.pow(100,2) - Math.pow(100*Math.sin(angle),2)));
+			newYDiff = direction.getY()*(Math.sqrt(Math.pow(100,2) - Math.pow(100*Math.cos(angle),2)));
+
+			
+			
+			newDragX = (int)(presX + newXDiff);
+			newDragY = (int)(presY + newYDiff);
+		}
+		else {
+			
+			newDragX = dragX;
+			newDragY = dragY;
+		}    	
+		
+		Rectangle newDragVector = new Rectangle(0, 0);
+		newDragVector.setBounds(newDragX, newDragY, 0, 0);
+
+		
+		return newDragVector;
+    }
+    
     protected void drawCat(Image image, Graphics2D g2d) {
-    	//g2d.drawOval(cat1.getX_Coord(), cat1.getY_Coord(), 10, 10);
-    	g2d.drawRect(cat1.getX_Coord(), cat1.getY_Coord(), 10, 10);
+    	
+    	//g2d.drawRect(cat1.getX_Coord(), cat1.getY_Coord(), 20, 20);
     	
     	if(cat1.getStationary() == true) {
     		
@@ -1393,13 +1450,17 @@ public class Level extends JPanel
     		
     		image = cat1.getNextFlyingSprite();
     		
+    		
     	}
     	
     	if(flipCat == true) {
-    		g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null), cat1.getY_Coord() , -image.getWidth(null), image.getHeight(null), this);
+    		
+    		//g2d.drawImage(image, cat1.getX_Coord() + image.getWidth(null), cat1.getY_Coord() , -image.getWidth(null), image.getHeight(null), this);
+    		g2d.drawImage(image, cat1.getX_Coord() - (image.getWidth(null) - cat1.getWidth())/2 + image.getWidth(null), cat1.getY_Coord() - (image.getHeight(null) - cat1.getHeight())/2 , -image.getWidth(null), image.getHeight(null), this);
     	}
     	else {
-    		g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+    		//g2d.drawImage(image, cat1.getX_Coord(), cat1.getY_Coord(), this);
+    		g2d.drawImage(image, cat1.getX_Coord() - (image.getWidth(null) - cat1.getWidth())/2, cat1.getY_Coord() - (image.getHeight(null) - cat1.getHeight())/2, this);
     	}
     	
     	
@@ -1415,11 +1476,13 @@ public class Level extends JPanel
         
     	
     }
-    
+    	
     protected void drawSatellite(Image image, Graphics2D g2d) {
     	
     	for(Satellite s : satelliteList) {
-    		g2d.drawOval(s.getX_Coord(), s.getY_Coord(), 10, 10);
+    		image  = s.getNextFlyingSprite();
+    		g2d.drawImage(image, s.getX_Coord(), s.getY_Coord(), this);
+    		//g2d.drawOval(s.getX_Coord(), s.getY_Coord(), 10, 10);
     		
     	}
     	
@@ -1438,9 +1501,9 @@ public class Level extends JPanel
         	}
         	
         	
-        	g2d.drawImage(image, p.getX_Coord() - p.getWidth()/2, p.getY_Coord() - p.getHeight()/2, this);
+        	g2d.drawImage(image, p.getX_Coord() - (image.getWidth(null) - p.getWidth())/2, p.getY_Coord() - (image.getHeight(null) - p.getHeight())/2, this);
         	//g2d.drawRect(p.getX_Coord()- p.getWidth()/4, p.getY_Coord() - p.getHeight()/4, 20, 20);
-        	g2d.drawRect(p.getX_Coord(), p.getY_Coord(), 20, 20);
+        	//g2d.drawRect(p.getX_Coord(), p.getY_Coord(), 20, 20);
         }
  	
     	
@@ -1454,7 +1517,9 @@ public class Level extends JPanel
         	dragY = presY;
         }
         
-        g.drawLine(presX, presY, dragX, dragY);    	
+        Rectangle newDragVector = new Rectangle (0, 0, 0, 0);
+        newDragVector = limitDrag(presX, presY, dragX, dragY);
+        g.drawLine(presX, presY, (int)newDragVector.getX(), (int)newDragVector.getY());    	
     }
     
   

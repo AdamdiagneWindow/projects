@@ -214,8 +214,13 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 public abstract class ProjectileNew extends Prop{
-
+	
+	protected String flyingSpritesDir;
+	protected List<Image> flyingSprites;
 	protected int x_Prev = 0, y_Prev = 0, x_2Prev = 0, y_2Prev = 0, x_3Prev = 0, y_3Prev = 0, x_4Prev = 0, y_4Prev = 0;
+	protected int rotationFrames = 9;
+	protected double queuedX_Vel, queuedY_Vel, queuedX_Force, queuedY_Force;
+	protected boolean doProcessVelocity, doProcessForce;
 	protected ImageRotate rotator;
 	protected boolean stationary;
 	protected boolean allowReset;
@@ -228,7 +233,8 @@ public abstract class ProjectileNew extends Prop{
 	public ProjectileNew (int x, int y, double vx, double vy,  int delay, World world) {
 		
 		sprites = new ArrayList<Image>();
-		contacting = false;
+		doProcessVelocity = false;
+		doProcessForce = false;
 		
 		m_world = world;
 		
@@ -237,16 +243,15 @@ public abstract class ProjectileNew extends Prop{
 		bd.type = BodyType.DYNAMIC;
 		body = m_world.createBody(bd);
 		shape = new PolygonShape();
-		shape.setAsBox(20f, 20f);
+		shape.setAsBox((float)(width/2), (float)(height/2));
 		fd = new FixtureDef();
 		fd.shape = shape;                  
 		fd.density = 0.5f;                   //Default Density. Change with setDensity function
-		fd.restitution = 1;                   //Default Restitution. Change with setRestitution function
-
-		
+		fd.restitution = 1;  //Default Restitution. Change with setRestitution function
+	
 		body.createFixture(fd);
 		body.setUserData(this);	
-	
+				
 		frameDelay = delay;
 		frameDelayInit = delay;
 		
@@ -275,35 +280,56 @@ public abstract class ProjectileNew extends Prop{
 		
 	}
 	
-	public void setVelocity(double vx, double vy) {
+	public void animateVarDelay() {
 		
-		if(Math.abs(vx) < 1) {
-			
-			if(vx > 0) {
-				vx = Math.ceil(vx);
-			}
-			else if(vx < 0) {
-				vx = Math.floor(vx);
-			}
-		}
-		if(Math.abs(vy) < 1) {
-			if(vy > 0) {
-				vy = Math.ceil(vy);
-			}
-			else if(vy < 0) {
-				vy = Math.floor(vy);
-			}
+    	int magVel = (int)getMag_Vel();
+    	if(magVel > 120) {
+    		magVel = 120;
+    	}
+    	if(count == frameDelay) {
+    		count = 0;
+    	}
+		if(count == 0) {
+			imageIndex++;
+			count = 0;
+			frameDelay = (int)(20 - ((double)magVel/120)*19);
 			
 		}
+			
+		if(imageIndex == flyingSprites.size()) {
+			imageIndex = 0;
+		}
+		count++;		
 		
-		System.out.println("setting vel to: x: " + vx + " vy: " + vy);
-	    body.setLinearVelocity(new Vec2((float)vx, (float)vy));	
+	}
+	
+	public Image getFlyingSprite() {
 		
+		System.out.println(imageIndex);
+		return flyingSprites.get(imageIndex);
+	}
+	
+	public Image getNextFlyingSprite() {
+		
+		animateVarDelay();
+		return getFlyingSprite();
+	}
+	
+	public void setVelocity( double vx, double vy) {
+		
+		
+		queuedX_Vel = vx;
+		queuedY_Vel = vy;
+		doProcessVelocity = true;
+		
+		//processVelocity();
+
 	}
 	
 	
 	public void setStationary(boolean state) {
 		
+		System.out.println("Setting stationary to: " + state);
 		stationary = state;
 	}
 	
@@ -314,8 +340,10 @@ public abstract class ProjectileNew extends Prop{
 	
 	public void applyForce(double fx, double fy) {
 		
-		body.applyForce(new Vec2((float)fx, (float)fy), body.getWorldCenter());
-		System.out.println("force applied");
+		queuedX_Force = fx;
+		queuedY_Force = fy;
+		doProcessForce = true;
+		
 	}
 	
 	public int getX_Prev(int i) {
@@ -393,6 +421,62 @@ public abstract class ProjectileNew extends Prop{
 		setStationary(true);
 		resetPropAnimation();
 		
+	}
+	
+	public void processVelocity() {
+		
+		double vx = queuedX_Vel;
+		double vy = queuedY_Vel; 
+		
+		//System.out.println("setting vel to: x: " + vx + " vy: " + vy);		
+		
+		if(Math.abs(vx) < 1) {
+			
+			if(vx > 0) {
+				vx = Math.ceil(vx);
+			}
+			else if(vx < 0) {
+				vx = Math.floor(vx);
+			}
+		}
+		if(Math.abs(vy) < 1) {
+			if(vy > 0) {
+				vy = Math.ceil(vy);
+			}
+			else if(vy < 0) {
+				vy = Math.floor(vy);
+			}
+			
+		}
+		
+
+	    body.setLinearVelocity(new Vec2((float)vx, (float)vy));	
+		
+	}
+	
+	public void processForce() {
+		
+		body.applyForce(new Vec2((float)queuedX_Force, (float)queuedY_Force), body.getWorldCenter());
+	}
+	
+	public void processOperations(){
+		
+		if(doProcessForce == true) {
+			processForce();
+			doProcessForce = false;
+		}		
+		
+		if(doProcessPosition == true) {
+			processPosition();
+			doProcessPosition = false;
+			
+		}
+		
+		if(doProcessVelocity == true) {
+			processVelocity();
+			doProcessVelocity = false;
+		}
+			
 	}
 	
 	

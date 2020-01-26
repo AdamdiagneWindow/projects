@@ -168,8 +168,9 @@ import java.awt.Rectangle;
 
 public class Prop {
 
-	protected int  width, height, imageIndex = 0, count = 0, frameDelay, frameDelayInit;
-	protected boolean contacting;
+	protected int  width = 20, height = 20, imageIndex = 0, count = 0, frameDelay, frameDelayInit;
+	protected int queuedX_Pos, queuedY_Pos;
+	protected boolean doProcessPosition;
 	protected List<Image> sprites;
 	protected Long collisionStart = new Long(0);
 	
@@ -192,7 +193,7 @@ public class Prop {
 	public Prop (int x, int y, int delay, World world){
 		
 		sprites = new ArrayList<Image>();
-		contacting = false;
+		doProcessPosition = false;
 		
 		m_world = world;
 		
@@ -201,7 +202,7 @@ public class Prop {
 		bd.type = BodyType.STATIC;
 		body = m_world.createBody(bd);
 		shape = new PolygonShape();
-		shape.setAsBox(20f, 20f);
+		shape.setAsBox((float)(width/2), (float)(height/2));
 		fd = new FixtureDef();
 		fd.shape = shape;                  
 		fd.density = 0.0f;                   //Default Density. Change with setDensity function
@@ -224,10 +225,11 @@ public class Prop {
 		im = icon.getImage();
 		sprites.add(im);
 		
+		/*
 		if(sprites.size() == 1) {
 			width = im.getWidth(null);
 			height = im.getHeight(null);
-		}
+		}*/
 		
 	}
 	
@@ -250,9 +252,11 @@ public class Prop {
 	
 	public void setPosition(int x, int y) {
 		
-		Vec2 position = new Vec2((float)x, (float)y);
-		body.setTransform( position, 0);
-	
+		queuedX_Pos = x;
+		queuedY_Pos = y;
+		doProcessPosition = true;
+		
+		//System.out.println("setting position");
 		
 	}
 	
@@ -325,6 +329,10 @@ public class Prop {
 		return (int)body.getPosition().y;
 	}
 	
+	public Body getBody() {
+		
+		return body;
+	}
 
 	public void startContact() {
 		//System.out.println("start contact");
@@ -336,7 +344,30 @@ public class Prop {
 		
 	}
 	
+	public void processPosition() {
+		int x = queuedX_Pos;
+		int y = queuedY_Pos;
+		
 
+		
+		Vec2 position = new Vec2((float)x, (float)y);
+	
+		body.setTransform( position, 0);
+	}
+	
+	public void processOperations() {
+		
+		if(doProcessPosition == true) {
+			
+			processPosition();
+			doProcessPosition = false;
+		}
+	}
+	
+	public void destroyBody() {
+		
+		m_world.destroyBody(body);
+	}
 	
 	
 	

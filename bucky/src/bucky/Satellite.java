@@ -98,8 +98,11 @@ public class Satellite extends ProjectileNew
 
 package bucky;
 
-import javax.swing.JOptionPane;
+import java.awt.Image;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.ImageIcon;
 import org.jbox2d.dynamics.World;
 
 public class Satellite extends ProjectileNew 
@@ -119,6 +122,12 @@ public class Satellite extends ProjectileNew
 		
 		super(x, y, xVel, yVel, delay, world);
 		
+		flyingSpritesDir = "src/resources/Penguin.png";
+		flyingSprites = new ArrayList<Image>();
+		
+		addRotationSprites(rotationFrames, flyingSprites, flyingSpritesDir);
+		
+		
 		x_Init = x;
 		y_Init = y;
 		x_Vel_Init = xVel;
@@ -137,11 +146,12 @@ public class Satellite extends ProjectileNew
     	beforeTime = System.currentTimeMillis();
     	while (exit != true) {
     		
-    		
     		if(System.currentTimeMillis() - beforeTime > 1000) {
+    			
     			
     			setPosition(x_Init, y_Init);
     			setVelocity(x_Vel_Init, y_Vel_Init);
+    			setStationary(false);
     			resetPropAnimation();
     			exit = true;
     					
@@ -152,8 +162,8 @@ public class Satellite extends ProjectileNew
     	exit = false;
     	
     	
-    	
     }
+    
     
     public int getX_Init() {
     	
@@ -179,7 +189,9 @@ public class Satellite extends ProjectileNew
 	public void respawn() {
 		timer = new Thread(this);
 		timer.start();
-		System.out.println("satellite respawned");
+		setStationary(true);
+		setPosition(getX_Coord() + 800, getY_Coord() + 800);
+		//System.out.println("satellite respawned..");
 
 	}
 	

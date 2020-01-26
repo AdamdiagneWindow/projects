@@ -635,6 +635,8 @@ public class LevelEditor extends Level{
 		blackInitY = new ArrayList<Integer>();
 		satInitX = new ArrayList<Integer>();
 		satInitY = new ArrayList<Integer>();
+		wallInitX = new ArrayList<Integer>();
+		wallInitY = new ArrayList<Integer>();
 		satInitXVel = new ArrayList<Double>();
 		satInitYVel = new ArrayList<Double>();
 		
@@ -670,7 +672,7 @@ public class LevelEditor extends Level{
 		    
 		    if (addingBlackHole.getBool() == true) {
 		    	
-		    	BlackHole b = new BlackHole(event.getX(), event.getY(), 5, 50, world);      // write black hole position
+		    	BlackHole b = new BlackHole(event.getX(), event.getY(), 2.5, 50, world);      // write black hole position
 		    	gravityField.addBlackHole(b);
 		    	
 		    	addingBlackHole.setBool(false);
@@ -702,7 +704,7 @@ public class LevelEditor extends Level{
 		    if(addingWall.getBool() == true) {
 		    	
 		    	if(space[wallX][wallY] == false) {
-		    		Wall w = new Wall(wallX, wallY, 10);
+		    		Wall w = new Wall(wallX, wallY, 10, world);
 		    		wallList.add(w);
 		    		space[wallX][wallY] = true;
 		    		
@@ -800,7 +802,7 @@ public class LevelEditor extends Level{
 				wallX = Math.round(event.getX()/20) * 20;
 				wallY = Math.round(event.getY()/20) * 20;	
 		    	if(space[wallX][wallY] == false) {
-		    		Wall w = new Wall(wallX, wallY, 10);
+		    		Wall w = new Wall(wallX, wallY, 10, world);
 		    		wallList.add(w);
 		    		space[wallX][wallY] = true;
 		    		
@@ -969,6 +971,9 @@ public class LevelEditor extends Level{
                  	if(satelliteList.size() > maxListSize) {
                  		maxListSize = satelliteList.size();
                  	}
+                 	if(wallList.size() > maxListSize) {
+                 		maxListSize = wallList.size();
+                 	}
                  	if(maxListSize == 0) {
                  		maxListSize = 1;
                  	}
@@ -1023,6 +1028,15 @@ public class LevelEditor extends Level{
                  		else {
                  			writeFileBuffer.write("all " + "all ");
                  		}
+                 		
+                 		if(wallList.size() > i) {
+                 			writeFileBuffer.write(wallList.get(i).getX_Coord() + " ");
+                 			writeFileBuffer.write(wallList.get(i).getY_Coord() + " ");
+                 		}
+                 		else {
+                 			writeFileBuffer.write("all " + "all ");
+                 		}
+                 		
                  		
 
 
@@ -1134,15 +1148,40 @@ public class LevelEditor extends Level{
     }    
  
     private void clearLevel() {
-    	starList.clear();
-    	wallList.clear();
-    	satelliteList.clear();
-    	gravityField.clearBlackHoles();
+ 
+    	clearPropList(starList);
+    	clearPropList(wallList);
+    	clearPropList(gravityField.getBlackHoleList());
+    	clearSatelliteList(satelliteList);
+    	
+    	//starList.clear();
+    	//wallList.clear();
+    	//satelliteList.clear();
+    	//gravityField.clearBlackHoles();
     	gravityField.resetPotentialMatrix();
     	space = null;
     	space = new boolean[width][height];
     
     }
+    
+    private void clearPropList(List<Prop> propList) {
+    	
+    	for(Prop p : propList) {
+    		p.destroyBody();
+    	}
+    	propList.clear();
+    	
+    }
+    
+    private void clearSatelliteList(List<Satellite> satelliteList) {
+    	
+    	for(Prop s : satelliteList) {
+    		s.destroyBody();
+    	}
+    	satelliteList.clear();
+    	
+    }
+
     
     public void endLevel() {
     	cat1.reset(catInitX, catInitY);

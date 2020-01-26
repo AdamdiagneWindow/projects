@@ -55,6 +55,7 @@ public class GameLauncher extends JFrame {
     	
         add(gamePanel);
         
+        
         setResizable(false);
         pack();
         

@@ -102,15 +102,15 @@ import org.jbox2d.dynamics.World;
 
 public class Cat extends ProjectileNew {
 	
-	private String flyingSpritesDir = "src/resources/catFlying.png", pulledSpritesDir = "src/resources/catPulled0.png";
-	private List<Image>  pulledSprites, flyingSprites;
-	private int rotationFrames = 9;
+	private String pulledSpritesDir = "src/resources/catPulled0.png";
+	private List<Image>  pulledSprites;
 	private boolean allowEndLevel;
 	
 	public Cat (int x, int y, double vx, double vy, int delay, World world) {
 		
 		super(x, y, vx, vy, delay, world);
 		
+		flyingSpritesDir = "src/resources/catFlying.png";
 		pulledSprites = new ArrayList<Image>(); 
 		flyingSprites = new ArrayList<Image>(); 
  
@@ -122,34 +122,12 @@ public class Cat extends ProjectileNew {
 		addSprite("src/resources/catBubble3.png");
 	}
 	
-	public void animateVarDelay() {
-		
-    	int magVel = (int)getMag_Vel();
-    	if(magVel > 7) {
-    		magVel = 7;
-    	}
-		if(count >= frameDelay) {
-			imageIndex++;
-			count = 0;
-			frameDelay = 4 - (magVel/7)*4;
-		}
-			
-		if(imageIndex == sprites.size()) {
-			imageIndex = 0;
-		}
-		count++;		
-		
-	}
 	
 	public void setAllowEndLevel(boolean state) {
 		
 		allowEndLevel = state;
 	}
 	
-	public Image getFlyingSprite() {
-		
-		return flyingSprites.get(imageIndex);
-	}
 	
 
 	
@@ -166,11 +144,6 @@ public class Cat extends ProjectileNew {
 	}	
 
 	
-	public Image getNextFlyingSprite() {
-		
-		animateVarDelay();
-		return getFlyingSprite();
-	}
 	
 	public boolean getAllowEndLevel() {
 		

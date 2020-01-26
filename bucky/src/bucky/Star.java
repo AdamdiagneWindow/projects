@@ -29,6 +29,9 @@ public class Star extends Prop{
 		
 		super(x, y, delay, world);
 		
+		body.getFixtureList().setSensor(false);
+		body.getFixtureList().getFilterData().maskBits = 0;
+		
 		addSprite("src/resources/starNew.png");
 		addSprite("src/resources/starNew1.png");
 		addSprite("src/resources/starNew2.png");
