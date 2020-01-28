@@ -648,7 +648,7 @@ public class LevelEditor extends Level{
 		setProps();	   //Read props data from level file and initializes props
 		setCanvasAppearance(); //Sets JPanel general appearance
 		setDisplayPanel(); // Sets stat display panel at top of screen
-		setInputPanel(); // Sets input buttons at button of panel
+		setInputPanel(); // Sets input buttons at bottom of panel
 		setEventHandlers(); //Sets event handlers
 		addElements();  //Adds panels to screen		
 		

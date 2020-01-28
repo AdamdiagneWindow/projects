@@ -16,13 +16,14 @@ import java.io.BufferedWriter;
 public class GameLauncher extends JFrame {
     
 	JPanel gamePanel;
+	LevelData levD;
 	String test = " test";
 	final static String TITLEPANEL = "Card with TitleScreen";
 	final static String GAMEPANEL = "Card with BoardPanel";
 	final static String LEVELTITLE = "Card with LevelTitle";
 	
 	
-	Level lev;
+	Level level;
 	LevelTitle levTitle;
 	Title titlePanel;
 	
@@ -37,13 +38,13 @@ public class GameLauncher extends JFrame {
     	gamePanel = new JPanel(new CardLayout());
         
         titlePanel = new Title();
-        
-        lev = new Level(1);
+        levD = new LevelData(1, 0 , 30);
+        level = new Level(levD);
        
     	levTitle = new LevelTitle(1);
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
-    	gamePanel.add(lev, GAMEPANEL);
+    	gamePanel.add(level, GAMEPANEL);
     	gamePanel.add(levTitle, LEVELTITLE);
 
     	titlePanel.setVisible(true);
@@ -67,10 +68,10 @@ public class GameLauncher extends JFrame {
         
     }    
     
-    public void addLevel(int level, Cat caT) {
-    	lev = null;
-    	lev = new Level(level, caT);
-    	gamePanel.add(lev, GAMEPANEL);
+    public void addLevel(LevelData levData) {
+    	level = null;
+    	level = new Level(levData);
+    	gamePanel.add(level, GAMEPANEL);
     }
     
     public void addLevelTitle(int level){
@@ -92,7 +93,7 @@ public class GameLauncher extends JFrame {
     
     
     public Level getLevel() {
-    	return lev;
+    	return level;
     }
     
     public LevelTitle getLevelTitle() {

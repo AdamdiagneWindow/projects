@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.List;
 import java.awt.BorderLayout;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
 
 
 /*
@@ -765,9 +766,11 @@ public class Level extends JPanel
 	protected List<Prop> wallList;
 	protected List<Satellite> satelliteList;
 	protected Goal gol;
-	protected int lev;
+	protected int lev, score;
+	protected double time = 1000;
 	
 	protected World world;
+	
 	private float timeStep = 1.0f/60.0f;     //was 1/60
 	private int velocityIterations = 3;  //was8
 	private int positionIterations = 2;   // was3
@@ -778,22 +781,18 @@ public class Level extends JPanel
 
 	}
 	
-	public Level(int level) {
-		initLevel(level);
-	}
-	
-	public Level(int level, Cat caT) {
-		catCont = caT;
-		initLevel(level);
+	public Level(LevelData levD) {
+		
+		initLevel(levD);
 	}
 
-	private void initLevel(int level) {
+	private void initLevel(LevelData levD) {
 		
 		Vec2 gravity = new Vec2(0.0f, 0.0f);
 		myContactListenerInstance = new MyContactListener();
 		world = new World(gravity);	              //create new world
 		world.setContactListener(myContactListenerInstance);       //set contact listener to custom contact listener
-	    lev = level;
+	    getLevelData(levD);
 	    exit = false;
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
@@ -1141,7 +1140,9 @@ public class Level extends JPanel
     		}	
 
   		}
-
+  		
+  		time = time - (0.005);
+  		label.setText("TIME: " + round(time, 2));
     	
     }
     
@@ -1301,12 +1302,14 @@ public class Level extends JPanel
     protected void setDisplayPanel() {
     	
 		displayPanel = new JPanel();
-		displayPanel.setPreferredSize(new Dimension(width, 20));
+		displayPanel.setPreferredSize(new Dimension(width, 50));
+		displayPanel.setLayout(new GridLayout(1,10));
+		displayPanel.setBackground(Color.BLACK);
 		
 		try {
 			//pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf"));
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf")));
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Minecraft.ttf")));
 					
 		}
 		
@@ -1314,10 +1317,13 @@ public class Level extends JPanel
 			
 		}
 
-		label = new JLabel("ExampleFont");
-		label.setFont(new Font("PixelMplus12", Font.BOLD, 10));
+		label = new JLabel(" TIME: " + time);
+		label.setForeground(Color.white);
+		label.setFont(new Font("PixelMplus12", Font.BOLD, 20));
 		label.setBounds(10,10, 500, 20);  
 		displayPanel.add(label);
+		
+		
     }
     
     
@@ -1428,6 +1434,15 @@ public class Level extends JPanel
 		return newDragVector;
     }
     
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+    
     protected void drawCat(Image image, Graphics2D g2d) {
     	
     	//g2d.drawRect(cat1.getX_Coord(), cat1.getY_Coord(), 20, 20);
@@ -1529,12 +1544,22 @@ public class Level extends JPanel
     	return animator;
     }
     
+    
+    public void getLevelData(LevelData levD) {
+    	
+    	score = levD.getScore();
+    	time = levD.getTime();
+    	lev = levD.getLevel();
+    	
+    }
+    
     public void endLevel() {
     	//levelFinished = true;
     	exit = true;
         System.out.println("I should be called only once");
 		GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
-		f1.addLevel(lev + 1, cat1);
+		LevelData levD = new LevelData(lev + 1, score, time);
+		f1.addLevel(levD);
 		f1.addLevelTitle(lev + 1);
 		exit = true;
 		world = null;
