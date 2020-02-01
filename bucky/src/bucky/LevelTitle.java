@@ -18,16 +18,14 @@ public class LevelTitle extends JPanel
 	private JLabel title;
 	private Font pixelFont;
 	
-	private int width = 800;
-	private int height = 800;
-	private int counter = 0;
-	private boolean breakLoop = false;
+	private int width = 800, height = 800, lev = 0, counter = 0;
+	private boolean exit= false;
 	
 	private Thread timer;
 	
-	
 	public LevelTitle(int level) {
 		
+		lev = level;
 		initLevelTitle(level);
 		
 	}
@@ -85,14 +83,12 @@ public class LevelTitle extends JPanel
 	private void cycle() {
 		
 		counter++;
-				
-		if (counter == 10) {
+		if (counter == 50) {
 			System.out.println("iniii");
-			//breakLoop = true;
+			exit = true;
 			GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
 			this.setVisible(false);
 			f1.getTitlePanel().setVisible(false);
-			//System.out.println("flicker");
 			f1.getLevel().setVisible(true);
 			if(f1.getLevel().getAnimator().isAlive() == false) {
 				f1.getLevel().startTimer();
@@ -111,12 +107,8 @@ public class LevelTitle extends JPanel
     	
     	beforeTime = System.currentTimeMillis();
     	
-    	while (true) {
-    		
-       		/*if(breakLoop == true) {
-       			System.out.println("broke");
-    			break;
-    		}*/
+    	while (exit != true) {
+  
     		cycle();
     		repaint();
     		

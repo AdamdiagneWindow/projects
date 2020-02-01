@@ -232,9 +232,11 @@ public abstract class ProjectileNew extends Prop{
 	
 	public ProjectileNew (int x, int y, double vx, double vy,  int delay, World world) {
 		
+		System.out.println("new projectile");
 		sprites = new ArrayList<Image>();
 		doProcessVelocity = false;
 		doProcessForce = false;
+		doProcessPosition = false;
 		
 		m_world = world;
 		
@@ -413,6 +415,11 @@ public abstract class ProjectileNew extends Prop{
 		return allowReset;
 	}
 	
+	public boolean getDoProcessPosition() {
+		
+		return doProcessPosition;
+	}
+	
 	public void reset(int x, int y) {
 		
 		System.out.println("reset");
@@ -467,6 +474,7 @@ public abstract class ProjectileNew extends Prop{
 		}		
 		
 		if(doProcessPosition == true) {
+			
 			processPosition();
 			doProcessPosition = false;
 			

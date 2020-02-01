@@ -252,11 +252,10 @@ public class Prop {
 	
 	public void setPosition(int x, int y) {
 		
+		System.out.println("settingPos x: " + x + " y:" + y);
 		queuedX_Pos = x;
 		queuedY_Pos = y;
 		doProcessPosition = true;
-		
-		//System.out.println("setting position");
 		
 	}
 	
@@ -348,8 +347,6 @@ public class Prop {
 		int x = queuedX_Pos;
 		int y = queuedY_Pos;
 		
-
-		
 		Vec2 position = new Vec2((float)x, (float)y);
 	
 		body.setTransform( position, 0);
@@ -358,7 +355,6 @@ public class Prop {
 	public void processOperations() {
 		
 		if(doProcessPosition == true) {
-			
 			processPosition();
 			doProcessPosition = false;
 		}

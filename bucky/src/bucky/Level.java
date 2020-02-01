@@ -834,6 +834,7 @@ public class Level extends JPanel
 		
 
 		public void mousePressed(MouseEvent event) {
+			System.out.println("Pressed");
 			presX = event.getX();
 			presY = event.getY();
 			
@@ -845,7 +846,7 @@ public class Level extends JPanel
 		}
 		
 		public void mouseReleased(MouseEvent event) {
-			
+			System.out.println("Released");
 			if(cat1.getStationary() == true) {
 				cat1.setVelocity( (presX - dragX), (presY - dragY) );
 			}
@@ -873,13 +874,14 @@ public class Level extends JPanel
 		public void mouseDragged(MouseEvent event) {
 			
 			if(drag == true && cat1.getStationary() == true) {
+				System.out.println("Dragged                    DDDDDDDDDDDDDDDDDDDD");
 				dragX = event.getX();
 				dragY = event.getY();
 				
 				Rectangle newDragVector = new Rectangle(0, 0, 0, 0);
 				newDragVector = limitDrag(presX, presY, dragX, dragY);	          //ForceVector used to store a vector	
-				
 				cat1.setPosition((int)newDragVector.getX(), (int)newDragVector.getY());
+
 			}
 			
 			
@@ -965,8 +967,8 @@ public class Level extends JPanel
     }
     
     private void cycle() {
-    	
-    	
+
+    	System.out.println("x: " + cat1.getX_Coord() + " y: " + cat1.getY_Coord());
       	if(cat1.getAllowReset() == true) {
     		cat1.setAllowReset(false);
     		cat1.reset(catInitX, catInitY);
@@ -1074,12 +1076,7 @@ public class Level extends JPanel
     				//cat.setVelocity( -cat.getX_Vel(), cat.getY_Vel());
     	
     			//}
-    			
-    
-    			
-    			
-    			
-    			
+    		
     		}
     		
     	}*/
@@ -1143,6 +1140,12 @@ public class Level extends JPanel
   		
   		time = time - (0.005);
   		label.setText("TIME: " + round(time, 2));
+  		if(time < 11) {
+  			label.setForeground(Color.red);
+  		}
+  		if(time <= 0) {
+  			endGame();
+  		}
     	
     }
     
@@ -1151,9 +1154,7 @@ public class Level extends JPanel
     @Override
     public void run() {
     	
-    	
     	long beforeTime, timeDiff, sleep;
-    	
     	beforeTime = System.currentTimeMillis();
     	
     	while (exit != true) {
@@ -1182,9 +1183,7 @@ public class Level extends JPanel
     		beforeTime = System.currentTimeMillis();
   
     	}
-    	
-    	
-    	
+    		
     }
     
     private int readStringAsInt(int integer, String string) {
@@ -1556,19 +1555,32 @@ public class Level extends JPanel
     public void endLevel() {
     	//levelFinished = true;
     	exit = true;
-        System.out.println("I should be called only once");
 		GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
 		LevelData levD = new LevelData(lev + 1, score, time);
 		f1.addLevel(levD);
 		f1.addLevelTitle(lev + 1);
-		exit = true;
 		world = null;
 		this.setVisible(false);
 		f1.getLevelTitle().setVisible(true);
 		f1.getLevelTitle().startTimer();
-		System.out.println(lev);
+		
 	
     }
+    
+    public void endGame() {
+    	
+    	System.out.println("GAME ENDED      ------------------------------------------------");
+    	exit = true;
+    	GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
+    	world = null;
+    	this.setVisible(false);
+    	f1.addGameOverScreen();
+    	f1.getGameOverScreen().setVisible(true);
+    	f1.getGameOverScreen().startTimer();
+    	
+    	
+    }
+    
     
 }
 

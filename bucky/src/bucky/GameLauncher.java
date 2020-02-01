@@ -18,14 +18,14 @@ public class GameLauncher extends JFrame {
 	JPanel gamePanel;
 	LevelData levD;
 	String test = " test";
-	final static String TITLEPANEL = "Card with TitleScreen";
-	final static String GAMEPANEL = "Card with BoardPanel";
-	final static String LEVELTITLE = "Card with LevelTitle";
+	final static String TITLEPANEL = "Card with TitleScreen", GAMEPANEL = "Card with BoardPanel"
+						,LEVELTITLE = "Card with LevelTitle", GAMEOVERSCREEN = "Card with GameOverScreen";
 	
 	
 	Level level;
 	LevelTitle levTitle;
 	Title titlePanel;
+	GameOverScreen gameOver;
 	
     public GameLauncher() {
 
@@ -38,9 +38,8 @@ public class GameLauncher extends JFrame {
     	gamePanel = new JPanel(new CardLayout());
         
         titlePanel = new Title();
-        levD = new LevelData(1, 0 , 30);
-        level = new Level(levD);
-       
+        levD = new LevelData(1, 0, 15);
+        level = new Level(levD); 
     	levTitle = new LevelTitle(1);
     	
     	gamePanel.add(titlePanel, TITLEPANEL);
@@ -63,9 +62,6 @@ public class GameLauncher extends JFrame {
         setTitle("Nekor");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        
-        
     }    
     
     public void addLevel(LevelData levData) {
@@ -75,9 +71,16 @@ public class GameLauncher extends JFrame {
     }
     
     public void addLevelTitle(int level){
+    	levTitle = null;
     	levTitle = new LevelTitle(level);
     	gamePanel.add(levTitle, LEVELTITLE);    	
     	
+    }
+    
+    public void addGameOverScreen() {
+    	gameOver = null;
+    	gameOver = new GameOverScreen();
+    	gamePanel.add(gameOver, GAMEOVERSCREEN);
     }
     
     
@@ -98,6 +101,10 @@ public class GameLauncher extends JFrame {
     
     public LevelTitle getLevelTitle() {
     	return levTitle;
+    }
+    
+    public GameOverScreen getGameOverScreen() {
+    	return gameOver;
     }
     
     
