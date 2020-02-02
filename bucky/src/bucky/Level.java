@@ -929,19 +929,15 @@ public class Level extends JPanel
 
     public void doDrawing(Graphics g) {
     
-    	Image image = null ;
+    	Image image = null;
     	
     	Graphics2D g2d = (Graphics2D) g;
-    	
     	g2d.setPaint(new Color(150, 150, 150));
-    	
         RenderingHints rh = new RenderingHints(
         		RenderingHints.KEY_ANTIALIASING,
-        		RenderingHints.VALUE_ANTIALIAS_ON);
-    	
+        		RenderingHints.VALUE_ANTIALIAS_ON);	
         rh.put(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
-        
         g2d.setRenderingHints(rh);   
   
         
@@ -1573,11 +1569,10 @@ public class Level extends JPanel
     	exit = true;
     	GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
     	world = null;
-    	this.setVisible(false);
     	f1.addGameOverScreen();
     	f1.getGameOverScreen().setVisible(true);
     	f1.getGameOverScreen().startTimer();
-    	
+    	this.setVisible(false);
     	
     }
     

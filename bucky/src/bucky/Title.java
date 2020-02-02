@@ -71,7 +71,7 @@ public class Title extends JPanel{
 	
 	private void setNextPanel() {
 		GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
-		f1.getTitlePanel().setVisible(false);
+		this.setVisible(false);
 		f1.getLevelTitle().setVisible(true);
 		f1.getLevelTitle().startTimer();
 	}
