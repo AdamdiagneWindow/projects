@@ -24,10 +24,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.awt.BorderLayout;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 
@@ -756,7 +759,7 @@ public class Level extends JPanel
 	
 	protected boolean exit = false;
 
-    protected JLabel label;
+    protected JLabel timeLabel, timeValueLabel, scoreLabel, scoreValueLabel;
     protected JPanel displayPanel;
 	
 	protected GravitationalField gravityField;
@@ -818,7 +821,6 @@ public class Level extends JPanel
 		setEventHandlers(); //Sets event handlers
 		addElements();  //Adds panels to screen
 		
-		System.out.println(satInitX + " " + satInitY + " " + satInitXVel + " " + satInitYVel );
 
 
 		
@@ -964,7 +966,6 @@ public class Level extends JPanel
     
     private void cycle() {
 
-    	System.out.println("x: " + cat1.getX_Coord() + " y: " + cat1.getY_Coord());
       	if(cat1.getAllowReset() == true) {
     		cat1.setAllowReset(false);
     		cat1.reset(catInitX, catInitY);
@@ -1011,71 +1012,6 @@ public class Level extends JPanel
 		//System.out.println("yPos: " + cat1.getY_Coord());
 		
     	Rectangle r3 = new Rectangle(cat1.getX_Coord(), cat1.getY_Coord(), 10, 10);
-    	
-    	
-    	
-    	/*
-    	for(Prop w: wallList) {
-    		
-    		x = w.getX_Coord();
-    		y = w.getY_Coord();
-    		Rectangle r4 = new Rectangle(x , y, 20, 20);
-
-    	
-    		
-    		if(drag == false && r3.intersects(r4)){
-    			
-    			
-    			
-    			Rectangle catCollisionSpace = new Rectangle(cat1.getX_Coord(), cat1.getY_Coord(), 10, 10);
-    			Rectangle intersection = catCollisionSpace.intersection(w.getBounds());
-    			
-    			Rectangle wallTop = new Rectangle(x, y, width, 2);
-    			Rectangle wallBottom = new Rectangle(x, y + 18, width, 2);
-    			Rectangle wallRight = new Rectangle(x + 18, y, 2, height);
-    			Rectangle wallLeft = new Rectangle(x, y, 2, height);
-    			
-    			Point catPoint = new Point(cat1.getX_Coord(), cat1.getY_Coord());
-    			
-    			
-    			//if( System.currentTimeMillis() - collisionStart > 1000 && intersection.width >= intersection.height) {
-    				
-    				
-    			if( space[x][y - 20] == false && cat1.getY_Vel() > 0 && catCollisionSpace.intersects(wallTop)) {
-    				cat1.setVelocity( cat1.getX_Vel(), -Math.abs(cat1.getY_Vel()));
-    				System.out.println("topBounce");
-    			}
-    			if(space[x][y + 20] == false && cat1.getY_Vel() < 0 && catCollisionSpace.intersects(wallBottom)) {
-    				System.out.println(cat1.getY_Vel());
-    				cat1.setVelocity( cat1.getX_Vel(), Math.abs(cat1.getY_Vel()));
-    				System.out.println("bottomBounce");
-    				System.out.println(cat1.getY_Vel());
-    			}
-    				
-    				//cat.setVelocity( cat.getX_Vel(), -cat.getY_Vel());
-    		
-    				
-    			//}
-    			
-    			//if(System.currentTimeMillis() - collisionStart > 1000 && intersection.height >= intersection.width) {
-    				
-    				
-    			if(space[x - 20][y] == false && cat1.getX_Vel() > 0 && catCollisionSpace.intersects(wallLeft)) {
-    				cat1.setVelocity( -Math.abs(cat1.getX_Vel()), cat1.getY_Vel());
-    				System.out.println("leftBounce");
-    			}
-    			if(space[x + 20][y] == false && cat1.getX_Vel() < 0 && catCollisionSpace.intersects(wallRight)) {
-    				cat1.setVelocity( Math.abs(cat1.getX_Vel()), cat1.getY_Vel());
-    				System.out.println("rightBounce");
-    			}
-    				
-    				//cat.setVelocity( -cat.getX_Vel(), cat.getY_Vel());
-    	
-    			//}
-    		
-    		}
-    		
-    	}*/
     	
     	if(world != null) {
     		  		world.step(timeStep, velocityIterations, positionIterations);
@@ -1128,16 +1064,20 @@ public class Level extends JPanel
     				//System.out.println("out of bounds respawn");
     			}
     			
-    			
-    			
     		}	
 
   		}
+  		 
+  		DecimalFormat df = new DecimalFormat("#0.00");
   		
+  		if(time < 10) {
+  			df = new DecimalFormat("# 0.00");
+  		}
+ 
   		time = time - (0.005);
-  		label.setText("TIME: " + round(time, 2));
+  		timeValueLabel.setText(" " + df.format(time));
   		if(time < 11) {
-  			label.setForeground(Color.red);
+  			timeValueLabel.setForeground(Color.red);
   		}
   		if(time <= 0) {
   			endGame();
@@ -1245,10 +1185,6 @@ public class Level extends JPanel
     			addStringToIntList(wallInitX, parts[12]);
     			addStringToIntList(wallInitY, parts[13]);
     			
-
-    			
-
-            
     		}	    		
     	} catch(IOException e) {
     		e.printStackTrace();
@@ -1295,11 +1231,11 @@ public class Level extends JPanel
     }
     
     protected void setDisplayPanel() {
-    	
+		
 		displayPanel = new JPanel();
 		displayPanel.setPreferredSize(new Dimension(width, 50));
-		displayPanel.setLayout(new GridLayout(1,10));
-		displayPanel.setBackground(Color.BLACK);
+		displayPanel.setLayout(new GridBagLayout());
+		displayPanel.setOpaque(false);
 		
 		try {
 			//pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("PixelMplus12.ttf"));
@@ -1311,14 +1247,53 @@ public class Level extends JPanel
 		catch (IOException | FontFormatException e){
 			
 		}
-
-		label = new JLabel(" TIME: " + time);
-		label.setForeground(Color.white);
-		label.setFont(new Font("PixelMplus12", Font.BOLD, 20));
-		label.setBounds(10,10, 500, 20);  
-		displayPanel.add(label);
+		GridBagConstraints c = new GridBagConstraints();
 		
+		scoreLabel = new JLabel(" SCORE");
+		scoreLabel.setForeground(Color.white);
+		scoreLabel.setFont(new Font("PixelMplus12", Font.BOLD, 20));
 		
+		//c.fill = GridBagConstraints.HORIZONTAL; 
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.5;	
+		
+		displayPanel.add(scoreLabel, c);		
+		
+		timeLabel = new JLabel(" TIME");
+		timeLabel.setForeground(Color.white);
+		timeLabel.setFont(new Font("PixelMplus12", Font.BOLD, 20));
+	
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		//c.anchor = GridBagConstraints.EAST;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		
+		displayPanel.add(timeLabel, c);	
+		
+		scoreValueLabel = new JLabel(" " + score);
+		scoreValueLabel.setForeground(Color.white);
+		scoreValueLabel.setFont(new Font("PixelMplus12", Font.BOLD, 20));
+    
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.weightx = 0.5;	
+		
+		displayPanel.add(scoreValueLabel, c);
+    
+		timeValueLabel = new JLabel(" " + time);
+		timeValueLabel.setForeground(Color.white);
+		timeValueLabel.setFont(new Font("PixelMplus12", Font.BOLD, 20));
+		
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		//c.anchor = GridBagConstraints.EAST;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.weightx = 0.5;
+		
+		displayPanel.add(timeValueLabel, c);	
     }
     
     
@@ -1552,7 +1527,7 @@ public class Level extends JPanel
     	//levelFinished = true;
     	exit = true;
 		GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
-		LevelData levD = new LevelData(lev + 1, score, time);
+		LevelData levD = new LevelData(lev + 1, score, time + 30);
 		f1.addLevel(levD);
 		f1.addLevelTitle(lev + 1);
 		world = null;

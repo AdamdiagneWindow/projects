@@ -628,7 +628,7 @@ public class LevelEditor extends Level{
 		world = new World(gravity);
 		world.setContactListener(myContactListenerInstance);       //set contact listener to custom contact listene
 		
-		lev = 1;
+		lev = 7;
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
 		blackInitX = new ArrayList<Integer>();
@@ -660,7 +660,7 @@ public class LevelEditor extends Level{
 			long time = 0;
 			currentX = event.getX();
 			currentY = event.getY();
-			label.setText("x = " + currentX + "     y = " + currentY);								
+			timeLabel.setText("x = " + currentX + "     y = " + currentY);								
 			
 		    
 		    if(addingBlackHole.getBool() == false && addingGoal.getBool() == false && addingStar.getBool() == false 
@@ -733,7 +733,7 @@ public class LevelEditor extends Level{
 		    	pres2Y = 0;
 		    	drag2X = 0;
 		    	drag2Y = 0;
-		    	label.setText("xVel " + s.getX_Vel() + "yVel " + s.getY_Vel());
+		    	timeLabel.setText("xVel " + s.getX_Vel() + "yVel " + s.getY_Vel());
 		    	
 		    }
 		    
