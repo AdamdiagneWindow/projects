@@ -593,7 +593,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -606,10 +609,15 @@ import bucky.Level.HandlerClass;
 
 public class LevelEditor extends Level{
 	
-	int currentX, currentY, blackHoleX = 0, blackHoleY = 0, goalX, goalY, starX, starY, satX, satY, wallX, wallY, pres2X, pres2Y, drag2X, drag2Y;
+	int currentX, currentY, blackHoleX = 0, blackHoleY = 0, goalX, goalY
+			, starX, starY, coinX, coinY, satX, satY, wallX, wallY, pres2X, pres2Y, drag2X, drag2Y;
 	
 	private boolean  settingSatVel = false;
-	private BooleanClass addingBlackHole = new BooleanClass() , addingGoal = new BooleanClass(), addingStar = new BooleanClass(), addingSatellite = new BooleanClass(), addingWall = new BooleanClass();
+	private BooleanClass addingBlackHole = new BooleanClass() , addingGoal = new BooleanClass(), addingStar = new BooleanClass(), 
+						addingSatellite = new BooleanClass(), addingWall = new BooleanClass()
+						, addingCoin = new BooleanClass();
+	
+	private  Set<Boolean> addingProps; 
 	
 	private JPanel inputPanel;
 	private JButton  saveLevel, clear, cancel;
@@ -628,7 +636,7 @@ public class LevelEditor extends Level{
 		world = new World(gravity);
 		world.setContactListener(myContactListenerInstance);       //set contact listener to custom contact listene
 		
-		lev = 7;
+		lev = 1;
 		starInitX = new ArrayList<Integer>();
 		starInitY = new ArrayList<Integer>();
 		blackInitX = new ArrayList<Integer>();
@@ -637,10 +645,13 @@ public class LevelEditor extends Level{
 		satInitY = new ArrayList<Integer>();
 		wallInitX = new ArrayList<Integer>();
 		wallInitY = new ArrayList<Integer>();
+		coinInitX = new ArrayList<Integer>();
+		coinInitY = new ArrayList<Integer>();
 		satInitXVel = new ArrayList<Double>();
 		satInitYVel = new ArrayList<Double>();
 		
 		starList = new ArrayList<Prop>();
+		coinList = new ArrayList<Prop>();
 		wallList = new ArrayList<Prop>();
 		satelliteList = new ArrayList<Satellite>();
 		gravityField = new GravitationalField(width, height);		
@@ -662,13 +673,23 @@ public class LevelEditor extends Level{
 			currentY = event.getY();
 			timeLabel.setText("x = " + currentX + "     y = " + currentY);								
 			
-		    
+		    /*
 		    if(addingBlackHole.getBool() == false && addingGoal.getBool() == false && addingStar.getBool() == false 
 		    		&& addingWall.getBool() == false && addingSatellite.getBool() ==  false && settingSatVel == false) {
 		    	
 		    	cat1.reset(currentX, currentY);
 				
+		    }*/
+		    
+		   addingProps =  new HashSet<Boolean>(Arrays.asList(addingBlackHole.getBool(), addingGoal.getBool(), addingStar.getBool(), 
+					addingSatellite.getBool(), addingWall.getBool(), addingCoin.getBool()));
+		    
+		    if(addingProps.contains(true) == false) {
+		    	
+		    	cat1.reset(currentX, currentY);
 		    }
+		    
+		    
 		    
 		    if (addingBlackHole.getBool() == true) {
 		    	
@@ -700,6 +721,18 @@ public class LevelEditor extends Level{
 		    	addingStar.setBool(false);
 		    	
 		    }
+		    
+		    if (addingCoin.getBool() == true) {
+		    	
+		    	Coin c = new Coin(event.getX(), event.getY(), 50, world);
+		    	coinList.add(c);
+		    	addingCoin.setBool(false);
+		    	
+		    }
+		    
+		    
+		    
+		    
 		    
 		    if(addingWall.getBool() == true) {
 		    	
@@ -864,6 +897,12 @@ public class LevelEditor extends Level{
 				starY = event.getY();
 			}
 			
+			if(addingCoin.getBool() == true) {
+				
+				coinX = event.getX();
+				coinY = event.getY();
+			}
+			
 			if(addingWall.getBool() == true) {
 				
 				wallX = Math.round(event.getX()/20) * 20;
@@ -901,6 +940,7 @@ public class LevelEditor extends Level{
 	        drawFromObjectList(image, g2d, gravityField.getBlackHoleList());
 	        drawFromObjectList(image, g2d, starList);	        
 	        drawFromObjectList(image, g2d, wallList);	
+	        drawFromObjectList(image, g2d, coinList);
 	        
 	        drawLine(g);
 	        drawLine2(g);
@@ -913,11 +953,12 @@ public class LevelEditor extends Level{
 		inputPanel = new JPanel();
 		inputPanel.setPreferredSize(new Dimension(width, 20));
 		inputPanel.setLayout(null);		
-		setAdderButton(0, 0, addingBlackHole);
+		setAdderButton(0, 0, addingBlackHole);           //sets buttons that adds props to level
 		setAdderButton(20, 0, addingGoal);
 		setAdderButton(40, 0, addingStar);
 		setAdderButton(60, 0, addingSatellite);
 		setAdderButton(80,0, addingWall);
+		setAdderButton(100, 0, addingCoin);
 		setSaveLevelButton();
 		setCancelButton();
 		setClearButton();
@@ -973,6 +1014,9 @@ public class LevelEditor extends Level{
                  	}
                  	if(wallList.size() > maxListSize) {
                  		maxListSize = wallList.size();
+                 	}
+                 	if(coinList.size() > maxListSize) {
+                 		maxListSize = coinList.size();
                  	}
                  	if(maxListSize == 0) {
                  		maxListSize = 1;
@@ -1037,12 +1081,16 @@ public class LevelEditor extends Level{
                  			writeFileBuffer.write("all " + "all ");
                  		}
                  		
+                 		if(coinList.size() > i) {
+                 			writeFileBuffer.write(coinList.get(i).getX_Coord() + " ");
+                 			writeFileBuffer.write(coinList.get(i).getY_Coord() + " ");
+                 		}
+                 		else {
+                 			writeFileBuffer.write("all " + "all ");
+                 		}                 		
                  		
-
-
-
                  		writeFileBuffer.newLine();
- 	
+                 		
                  	}
                  	
                  	writeFileBuffer.close();
@@ -1095,7 +1143,7 @@ public class LevelEditor extends Level{
     
     private void setInputLevelField() {
 		inputLevel = new JTextField();
-		inputLevel.setBounds(100, 0, 20,20);
+		inputLevel.setBounds(120, 0, 20,20);
 		inputLevel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -1115,6 +1163,10 @@ public class LevelEditor extends Level{
     	
     	if(addingStar.getBool() == true) {
     		g2d.drawOval(starX, starY, 10, 10);
+    	}
+    	
+    	if(addingCoin.getBool() == true) {
+    		g2d.drawOval(coinX, coinY, 10, 10);
     	}
     	
         if(addingGoal.getBool() == true) {
@@ -1151,6 +1203,7 @@ public class LevelEditor extends Level{
  
     	clearPropList(starList);
     	clearPropList(wallList);
+    	clearPropList(coinList);
     	clearPropList(gravityField.getBlackHoleList());
     	clearSatelliteList(satelliteList);
     	

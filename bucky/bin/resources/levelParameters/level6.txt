@@ -1,1 +1,21 @@
-401 183 403 590 all all 411 496 23 707 8.0 -3.7 
+261 395 656 604 all all all all 784 410 -22.0 12.0 780 340 
+all all all all all all all all all all all all 760 340 
+all all all all all all all all all all all all 740 340 
+all all all all all all all all all all all all 720 340 
+all all all all all all all all all all all all 700 340 
+all all all all all all all all all all all all 680 340 
+all all all all all all all all all all all all 660 340 
+all all all all all all all all all all all all 640 340 
+all all all all all all all all all all all all 620 360 
+all all all all all all all all all all all all 600 380 
+all all all all all all all all all all all all 580 400 
+all all all all all all all all all all all all 560 420 
+all all all all all all all all all all all all 540 440 
+all all all all all all all all all all all all 520 460 
+all all all all all all all all all all all all 520 480 
+all all all all all all all all all all all all 520 500 
+all all all all all all all all all all all all 520 520 
+all all all all all all all all all all all all 580 700 
+all all all all all all all all all all all all 600 700 
+all all all all all all all all all all all all 620 700 
+all all all all all all all all all all all all 640 700 

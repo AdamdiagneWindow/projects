@@ -1,6 +1,35 @@
-202 193 564 518 all all all all 114 745 6.800000000000001 -10.200000000000001 
-all all all all all all all all 120 758 23.5 -27.8 
-all all all all all all all all 124 745 10.8 -16.2 
-all all all all all all all all 105 755 1.6 -2.0 
-all all all all all all all all 116 759 10.600000000000001 -14.600000000000001 
-all all all all all all all all 153 752 11.8 -19.3 
+665 342 58 339 all all all all 411 768 0.0 -91.0 460 360 
+all all all all all all all all 187 3 -1.0 31.0 460 380 
+all all all all all all all all all all all all 460 400 
+all all all all all all all all all all all all 460 420 
+all all all all all all all all all all all all 460 440 
+all all all all all all all all all all all all 460 460 
+all all all all all all all all all all all all 480 480 
+all all all all all all all all all all all all 500 480 
+all all all all all all all all all all all all 520 480 
+all all all all all all all all all all all all 540 480 
+all all all all all all all all all all all all 560 480 
+all all all all all all all all all all all all 580 480 
+all all all all all all all all all all all all 600 480 
+all all all all all all all all all all all all 620 480 
+all all all all all all all all all all all all 640 480 
+all all all all all all all all all all all all 660 480 
+all all all all all all all all all all all all 680 480 
+all all all all all all all all all all all all 460 200 
+all all all all all all all all all all all all 460 180 
+all all all all all all all all all all all all 460 160 
+all all all all all all all all all all all all 460 140 
+all all all all all all all all all all all all 460 120 
+all all all all all all all all all all all all 460 100 
+all all all all all all all all all all all all 460 80 
+all all all all all all all all all all all all 460 60 
+all all all all all all all all all all all all 460 40 
+all all all all all all all all all all all all 460 340 
+all all all all all all all all all all all all 360 180 
+all all all all all all all all all all all all 340 180 
+all all all all all all all all all all all all 320 180 
+all all all all all all all all all all all all 300 180 
+all all all all all all all all all all all all 280 180 
+all all all all all all all all all all all all 280 160 
+all all all all all all all all all all all all 260 160 
+all all all all all all all all all all all all 240 180 

@@ -750,7 +750,8 @@ public class Level extends JPanel
 	protected int  presX = 0, presY = 0, dragX = 0, dragY = 0;
 	protected int catInitX, catInitY, goalInitX, goalInitY;
 	
-	protected List<Integer> starInitX, starInitY, blackInitX, blackInitY, satInitX, satInitY, wallInitX, wallInitY;
+	protected List<Integer> starInitX, starInitY, blackInitX, blackInitY
+							, coinInitX, coinInitY, satInitX, satInitY, wallInitX, wallInitY;
 	protected List<Double> satInitXVel, satInitYVel;
 	
 	private double angle, tanAngle;
@@ -765,8 +766,7 @@ public class Level extends JPanel
 	protected GravitationalField gravityField;
 	protected boolean[][] space = new boolean[width][height];
 	protected Cat cat1, catCont;
-	protected List<Prop> starList;
-	protected List<Prop> wallList;
+	protected List<Prop> starList, wallList, coinList;
 	protected List<Satellite> satelliteList;
 	protected Goal gol;
 	protected int lev, score;
@@ -805,11 +805,14 @@ public class Level extends JPanel
 		satInitY = new ArrayList<Integer>();
 		wallInitX = new ArrayList<Integer>();
 		wallInitY = new ArrayList<Integer>();
+		coinInitX = new ArrayList<Integer>();
+		coinInitY = new ArrayList<Integer>();
 		satInitXVel = new ArrayList<Double>();
 		satInitYVel = new ArrayList<Double>();
 		
 		
 		starList = new ArrayList<Prop>();
+		coinList = new ArrayList<Prop>();
 		wallList = new ArrayList<Prop>();
 		satelliteList = new ArrayList<Satellite>();
 		gravityField = new GravitationalField(width, height);
@@ -885,9 +888,7 @@ public class Level extends JPanel
 				cat1.setPosition((int)newDragVector.getX(), (int)newDragVector.getY());
 
 			}
-			
-			
-			
+		
 		}
 		
 		public void mouseMoved(MouseEvent event) {
@@ -949,6 +950,7 @@ public class Level extends JPanel
         drawFromObjectList(image, g2d, gravityField.getBlackHoleList());
         drawFromObjectList(image, g2d, starList);
         drawFromObjectList(image, g2d, wallList);
+        drawFromObjectList(image, g2d, coinList);
         
         drawLine(g);
         
@@ -1184,6 +1186,8 @@ public class Level extends JPanel
     			addStringToDoubleList(satInitYVel, parts[11]);
     			addStringToIntList(wallInitX, parts[12]);
     			addStringToIntList(wallInitY, parts[13]);
+    			addStringToIntList(coinInitX, parts[14]);
+    			addStringToIntList(coinInitY, parts[15]);
     			
     		}	    		
     	} catch(IOException e) {
@@ -1198,13 +1202,14 @@ public class Level extends JPanel
     	cat1 = new Cat(catInitX, catInitY, 0, 0, 50, world);
 		if(goalInitX != 0 && goalInitY != 0) {
 			gol = new Goal(goalInitX, goalInitY, 50, world);	
+			System.out.println("goal added");
 		}
 		
 		for(int i = 0; i < starInitX.size(); i++) {
 			
 			Star s = new Star(starInitX.get(i), starInitY.get(i), 50, world);
 			starList.add(s);
-			
+			System.out.println("star added");
 		}
 		
 		for(int i = 0; i < blackInitX.size(); i++) {
@@ -1225,6 +1230,15 @@ public class Level extends JPanel
 			
 			Wall w = new Wall(wallInitX.get(i), wallInitY.get(i), 50, world);
 			wallList.add(w);
+			
+		}
+		
+		
+		for(int i = 0; i < coinInitX.size(); i++) {
+			
+			Coin c = new Coin(coinInitX.get(i), coinInitY.get(i), 50, world);
+			coinList.add(c);
+			System.out.println("coin added");
 			
 		}
 		

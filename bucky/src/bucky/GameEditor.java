@@ -27,8 +27,6 @@ public class GameEditor extends JFrame {
         setResizable(false);
         pack();
     
-        
-        
         setTitle("Basic shapes");
         setLocationRelativeTo(null);
         

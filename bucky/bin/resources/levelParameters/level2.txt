@@ -1,1 +1,10 @@
-162 645 634 228 all all 375 449 all all all all 
+413 269 403 479 all all all all all all all all 380 420 
+all all all all all all all all all all all all 400 420 
+all all all all all all all all all all all all 420 420 
+all all all all all all all all all all all all 440 420 
+all all all all all all all all all all all all 460 420 
+all all all all all all all all all all all all 260 400 
+all all all all all all all all all all all all 260 420 
+all all all all all all all all all all all all 260 440 
+all all all all all all all all all all all all 260 460 
+all all all all all all all all all all all all 260 480 

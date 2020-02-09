@@ -1,1 +1,12 @@
-133 171 626 570 all all 377 361 480 30 -5.300000000000001 5.4 
+261 395 589 327 all all 443 418 all all all all 500 300 
+all all all all all all all all all all all all 500 320 
+all all all all all all all all all all all all 500 340 
+all all all all all all all all all all all all 500 360 
+all all all all all all all all all all all all 520 280 
+all all all all all all all all all all all all 540 280 
+all all all all all all all all all all all all 560 260 
+all all all all all all all all all all all all 580 260 
+all all all all all all all all all all all all 600 260 
+all all all all all all all all all all all all 620 260 
+all all all all all all all all all all all all 640 260 
+all all all all all all all all all all all all 660 280 
