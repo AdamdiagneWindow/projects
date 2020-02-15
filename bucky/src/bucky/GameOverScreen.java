@@ -137,7 +137,7 @@ public class GameOverScreen extends JPanel
 		if (counter == 200) {
 	    	exit = true;
 	    	GameLauncher f1 = (GameLauncher) SwingUtilities.windowForComponent(this);
-	    	LevelData levD = new LevelData(1, 0, 30);
+	    	LevelData levD = new LevelData(1, 0, 5);
 			f1.addLevel(levD);
 			f1.addLevelTitle(1);
 	    	this.setVisible(false);

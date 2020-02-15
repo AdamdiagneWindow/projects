@@ -38,7 +38,7 @@ public class GameLauncher extends JFrame {
     	gamePanel = new JPanel(new CardLayout());
         
         titlePanel = new Title();
-        levD = new LevelData(1, 0, 30);
+        levD = new LevelData(1, 0, 2);
         level = new Level(levD); 
     	levTitle = new LevelTitle(1);
     	gameOver = new GameOverScreen();
